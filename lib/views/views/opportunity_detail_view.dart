@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:kinana_al_sham/controllers/application_controller.dart';
 import 'package:kinana_al_sham/models/opportunity_model.dart';
 
 import 'package:kinana_al_sham/theme/AppColors.dart';
@@ -8,13 +10,13 @@ import 'package:kinana_al_sham/widgets/CustomButton.dart';
 class OpportunityDetailView extends StatelessWidget {
   final Opportunity opportunity;
   final dateFormat = DateFormat.yMMMMd('ar');
+  final controller = Get.put(ApplicationController());
 
   OpportunityDetailView({required this.opportunity});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       appBar: AppBar(
         backgroundColor: AppColors.pureWhite,
         elevation: 0,
@@ -30,8 +32,8 @@ class OpportunityDetailView extends StatelessWidget {
             end: Alignment.bottomLeft,
             colors: [
               AppColors.pureWhite,
-              AppColors.grayWhite, 
-              AppColors.pinkBeige, 
+              AppColors.grayWhite,
+              AppColors.pinkBeige,
             ],
           ),
         ),
@@ -101,8 +103,19 @@ class OpportunityDetailView extends StatelessWidget {
                       Text(opportunity.requirements),
                       SizedBox(height: 30),
                       CustomButton(
-                        text: 'تسجيل',
-                        onPressed: () {},
+                        text: 'تقديم طلب',
+                        onPressed: () async {
+                          final controller = Get.find<ApplicationController>();
+                          final success = await controller.applyToOpportunity(
+                            opportunity.id,
+                            "أود أن أتقدم لهذه الفرصة لأنني أمتلك المهارات المطلوبة وأرغب في المساهمة",
+                          );
+                          if (success) {
+                            Get.snackbar("تم التقديم", "تم إرسال الطلب بنجاح");
+                          } else {
+                            Get.snackbar("فشل", "حدث خطأ أثناء التقديم");
+                          }
+                        },
                         color: AppColors.darkBlue,
                         textcolor: AppColors.pureWhite,
                       ),

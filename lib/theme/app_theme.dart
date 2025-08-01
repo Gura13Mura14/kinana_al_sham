@@ -5,7 +5,7 @@ class AppTheme {
   static final ThemeData lightTheme = ThemeData(
     scaffoldBackgroundColor: AppColors.grayWhite, // خلفية مريحة
     primaryColor: AppColors.darkBlue,
-    fontFamily: 'Cairo',
+   // fontFamily: 'Cairo',
 
     textTheme: const TextTheme(
       bodyLarge: TextStyle(fontSize: 16, color: AppColors.darkBlue),

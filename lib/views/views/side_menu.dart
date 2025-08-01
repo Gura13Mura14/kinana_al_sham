@@ -9,7 +9,7 @@ class SideMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: TextDirection.rtl, 
+      textDirection: TextDirection.rtl,
       child: Drawer(
         child: FutureBuilder(
           future: StorageService.getLoginData(),
@@ -25,9 +25,7 @@ class SideMenu extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 DrawerHeader(
-                  decoration: BoxDecoration(
-                    color: AppColors.darkBlue,
-                  ),
+                  decoration: BoxDecoration(color: AppColors.darkBlue),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -49,13 +47,16 @@ class SideMenu extends StatelessWidget {
                     children: [
                       /// استفسارات
                       ListTile(
-                        leading: const Icon(Icons.question_answer, color: Colors.blue),
+                        leading: const Icon(
+                          Icons.question_answer,
+                          color: Colors.blue,
+                        ),
                         title: const Text("الاستفسارات"),
                         onTap: () {
                           if (userType == 'متطوع') {
-                            Get.toNamed('/inquiries/volunteer');
+                            Get.toNamed('/Inquiry');
                           } else {
-                            Get.toNamed('/inquiries/beneficiary');
+                            Get.toNamed('/Inquiry');
                           }
                         },
                       ),
@@ -66,9 +67,9 @@ class SideMenu extends StatelessWidget {
                         title: const Text("بروفايلي"),
                         onTap: () {
                           if (userType == 'متطوع') {
-                            Get.toNamed('/profile/volunteer');
+                            Get.toNamed('/profile-details');
                           } else {
-                            Get.toNamed('/profile/beneficiary');
+                            Get.toNamed('/beneficiary-profile');
                           }
                         },
                       ),
@@ -79,12 +80,97 @@ class SideMenu extends StatelessWidget {
                         title: const Text("لوحة الشرف"),
                         onTap: () {
                           if (userType == 'متطوع') {
-                            Get.toNamed('/honor-board/volunteer');
+                            Get.toNamed('/HonorBoard');
                           } else {
-                            Get.toNamed('/honor-board/beneficiary');
+                            Get.toNamed('/HonorBoard');
                           }
                         },
                       ),
+                      if (userType == 'متطوع') ...[
+                        ListTile(
+                          leading: const Icon(
+                            Icons.work,
+                            color: Colors.deepPurple,
+                          ),
+                          title: const Text("طلباتي"),
+                          onTap: () {
+                            Get.toNamed('/my_applications');
+                          },
+                        ),
+                        ListTile(
+                          leading: const Icon(
+                            Icons.emergency,
+                            color: Colors.black,
+                          ),
+                          title: const Text("المساعدات الطارئة"),
+                          onTap: () {
+                            Get.toNamed('/emergency_requests');
+                          },
+                        ),
+                      ],
+                      if (userType == 'مستفيد') ...[
+                        ListTile(
+                          leading: const Icon(
+                            Icons.request_page,
+                            color: Colors.deepPurple,
+                          ),
+                          title: const Text("طلب مساعدة"),
+                          onTap: () {
+                            Get.toNamed('/request_assistance');
+                          },
+                        ),
+                        ListTile(
+                          leading: const Icon(
+                            Icons.assignment,
+                            color: Colors.teal,
+                          ),
+                          title: const Text("طلباتي"),
+                          onTap: () {
+                            Get.toNamed('/beni_requests');
+                          },
+                        ),
+                        ListTile(
+                          leading: const Icon(
+                            Icons.text_snippet,
+                            color: Colors.teal,
+                          ),
+                          title: const Text('كتابة قصة نجاح'),
+                          onTap: (){
+                            Get.toNamed('/success_story_form');
+                          },
+                        ),
+                        ListTile(
+                          leading: const Icon(
+                            Icons.text_snippet,
+                            color: Colors.teal,
+                          ),
+                          title: const Text('قصص نجاحي'),
+                          onTap: (){
+                            Get.toNamed('/review_stories');
+                          },
+                        ),
+
+                        ListTile(
+                          leading: const Icon(
+                            Icons.help_outline,
+                            color: Colors.teal,
+                          ),
+                          title: const Text("طلب مساعدة طارئة"),
+                          onTap: () {
+                            Get.toNamed('/beneficiary_emergency_request');
+                          },
+                        ),
+                        ListTile(
+                          leading: const Icon(
+                            Icons.help,
+                            color: Colors.teal,
+                          ),
+                          title: const Text('طلبات مساعدة طارئة'),
+                          onTap: (){
+                            Get.toNamed('/beni_emergency_requests');
+                          },
+                        ),
+                      ],
                     ],
                   ),
                 ),

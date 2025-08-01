@@ -1,10 +1,12 @@
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:kinana_al_sham/widgets/search_and_flter%20.dart';
 import 'dart:convert';
 import '../models/volunteering_opportunity_model.dart';
 
 class VolunteeringOpportunityController extends GetxController {
-  var opportunities = <VolunteeringOpportunity>[].obs;
+  var allOpportunities = <VolunteeringOpportunity>[].obs;
+  var filteredOpportunities = <VolunteeringOpportunity>[].obs;
   var isLoading = false.obs;
 
   @override
@@ -20,7 +22,9 @@ class VolunteeringOpportunityController extends GetxController {
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body)['data'] as List;
-        opportunities.value = jsonData.map((e) => VolunteeringOpportunity.fromJson(e)).toList();
+        final list = jsonData.map((e) => VolunteeringOpportunity.fromJson(e)).toList();
+        allOpportunities.value = list;
+        filteredOpportunities.value = list;
       } else {
         Get.snackbar("خطأ", "فشل تحميل البيانات");
       }
@@ -29,5 +33,30 @@ class VolunteeringOpportunityController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void filterOpportunities(String searchText, SortOption? sortOption) {
+    var list = allOpportunities.where((opp) {
+      return opp.title.toLowerCase().contains(searchText.toLowerCase());
+    }).toList();
+
+    switch (sortOption) {
+      case SortOption.nameAZ:
+        list.sort((a, b) => a.title.compareTo(b.title));
+        break;
+      case SortOption.nameZA:
+        list.sort((a, b) => b.title.compareTo(a.title));
+        break;
+      case SortOption.dateNewest:
+        list.sort((a, b) => b.startDate.compareTo(a.startDate));
+        break;
+      case SortOption.dateOldest:
+        list.sort((a, b) => a.startDate.compareTo(b.startDate));
+        break;
+      default:
+        break;
+    }
+
+    filteredOpportunities.value = list;
   }
 }

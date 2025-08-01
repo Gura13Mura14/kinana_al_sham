@@ -53,7 +53,7 @@ class VolunteeringOpportunityCard extends StatelessWidget {
                     'lib/assets/images/volunteer.png',
                     height: 120,
                     width: double.infinity,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain,
                   ),
                 ),
 

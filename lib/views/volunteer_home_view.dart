@@ -16,7 +16,7 @@ class VolunteerHomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const SideMenu(),
+      endDrawer: const SideMenu(),
       backgroundColor: AppColors.pureWhite,
       body: Container(
         decoration: const BoxDecoration(
@@ -104,7 +104,7 @@ class VolunteerHomeView extends StatelessWidget {
                                 color: AppColors.darkBlue,
                               ),
                               onPressed:
-                                  () => Scaffold.of(context).openDrawer(),
+                                  () => Scaffold.of(context).openEndDrawer(),
                             ),
                           ),
                     ),

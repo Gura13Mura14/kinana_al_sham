@@ -14,7 +14,7 @@ class BeneficiaryHomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const SideMenu(),
+      endDrawer: const SideMenu(),
       backgroundColor: AppColors.grayWhite,
       body: Container(
         child: SafeArea(
@@ -80,14 +80,14 @@ class BeneficiaryHomeView extends StatelessWidget {
                                 color: AppColors.darkBlue,
                               ),
                               onPressed:
-                                  () => Scaffold.of(context).openDrawer(),
+                                  () => Scaffold.of(context).openEndDrawer(),
                             ),
                           ),
                     ),
                   ],
                 ),
 
-                const SizedBox(height: 40),
+                const SizedBox(height: 8),
 
                 // الدوائر الأفقية للخدمات
                 SizedBox(
@@ -114,7 +114,7 @@ class BeneficiaryHomeView extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 50),
+                const SizedBox(height: 20),
 
                 // عنوان الرسم البياني
                 Align(

@@ -1,10 +1,11 @@
 
-import 'package:kinana_al_sham/models/user_model.dart';
+import 'package:kinana_al_sham/models/simple_user_model.dart';
+
 
 class LoginResponse {
   final String message;
   final String token;
-  final User user;
+  final SimpleUser user;
 
   LoginResponse({
     required this.message,
@@ -16,7 +17,7 @@ class LoginResponse {
     return LoginResponse(
       message: json['message'],
       token: json['token'],
-      user: User.fromJson(json['user']),
+      user: SimpleUser.fromJson(json['user']),
     );
   }
 }

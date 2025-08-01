@@ -1,29 +1,43 @@
-import 'dart:convert';
-
 class VolunteerDetails {
-  final String? skills;
-  final String? interests;
-  final Map<String, String>? availabilitySchedule;
-  final int? totalPoints;
-  final String? totalHoursVolunteered;
+  final int userId;
+  final String skills;
+  final String interests;
+  final Map<String, String> availabilitySchedule;
+  final String emergencyContactName;
+  final String emergencyContactPhone;
+  final String dateJoinedFromForm;
+  final String? volunteeringTypePreference;
+  final String address;
+  final String createdAt;
+  final String updatedAt;
 
   VolunteerDetails({
-    this.skills,
-    this.interests,
-    this.availabilitySchedule,
-    this.totalPoints,
-    this.totalHoursVolunteered,
+    required this.userId,
+    required this.skills,
+    required this.interests,
+    required this.availabilitySchedule,
+    required this.emergencyContactName,
+    required this.emergencyContactPhone,
+    required this.dateJoinedFromForm,
+    this.volunteeringTypePreference,
+    required this.address,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   factory VolunteerDetails.fromJson(Map<String, dynamic> json) {
     return VolunteerDetails(
+      userId: json['user_id'],
       skills: json['skills'],
       interests: json['interests'],
-      availabilitySchedule: json['availability_schedule'] != null
-          ? Map<String, String>.from(jsonDecode(json['availability_schedule']))
-          : null,
-      totalPoints: json['total_points'],
-      totalHoursVolunteered: json['total_hours_volunteered'],
+      availabilitySchedule: Map<String, String>.from(json['availability_schedule'] ?? {}),
+      emergencyContactName: json['emergency_contact_name'],
+      emergencyContactPhone: json['emergency_contact_phone'],
+      dateJoinedFromForm: json['date_joined_from_form'],
+      volunteeringTypePreference: json['volunteering_type_preference'],
+      address: json['address'],
+      createdAt: json['created_at'],
+      updatedAt: json['updated_at'],
     );
   }
 }

@@ -7,7 +7,7 @@ class VolunteeringOpportunityCard extends StatelessWidget {
   final VolunteeringOpportunity opportunity;
   final VoidCallback onTap;
 
-  VolunteeringOpportunityCard({required this.opportunity, required this.onTap});
+  VolunteeringOpportunityCard({super.key, required this.opportunity, required this.onTap});
 
   final dateFormat = DateFormat.yMMMMd('en_US');
 

@@ -6,6 +6,8 @@ import 'package:kinana_al_sham/controllers/success_story_controller.dart';
 class ReviewStoriesPage extends StatelessWidget {
   final controller = Get.put(SuccessStoryController());
 
+   ReviewStoriesPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     controller.loadPendingStories();

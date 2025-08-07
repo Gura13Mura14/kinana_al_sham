@@ -81,7 +81,7 @@ class _SearchAndFilterWidgetState extends State<SearchAndFilterWidget> {
                         Navigator.pop(context);
                       },
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             ),

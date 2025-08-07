@@ -10,7 +10,7 @@ class VolunteeringOpportunityDetailView extends StatelessWidget {
   final VolunteeringOpportunity opportunity;
   final dateFormat = DateFormat.yMMMMd('ar');
 
-  VolunteeringOpportunityDetailView({required this.opportunity});
+  VolunteeringOpportunityDetailView({super.key, required this.opportunity});
 
   @override
   Widget build(BuildContext context) {

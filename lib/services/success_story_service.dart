@@ -29,7 +29,7 @@ class SuccessStoryService {
     final token = (await StorageService.getLoginData())?['token'];
     final request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://10.0.2.2:8000/api/beneficiaries/success-stories'),
+      Uri.parse('http://10.0.2.2:8000/api/success-stories'),
     );
     request.headers['Authorization'] = 'Bearer $token';
     request.fields['title'] = title;

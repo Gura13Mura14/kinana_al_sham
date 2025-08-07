@@ -77,7 +77,7 @@ Future<void> fetchInquiries() async {
   final userType = loginData['user_type']!;
   final url = userType == 'متطوع'
       ? 'http://10.0.2.2:8000/api/all-inquiries'
-      : 'http://10.0.2.2:8000/api/beneficiaries/inquiries';
+      : 'http://10.0.2.2:8000/api/inquiries';
 
   try {
     final response = await http.get(

@@ -12,7 +12,7 @@ class OpportunityDetailView extends StatelessWidget {
   final dateFormat = DateFormat.yMMMMd('ar');
   final controller = Get.put(ApplicationController());
 
-  OpportunityDetailView({required this.opportunity});
+  OpportunityDetailView({super.key, required this.opportunity});
 
   @override
   Widget build(BuildContext context) {

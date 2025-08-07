@@ -9,6 +9,8 @@ class RequestAssistancePage extends StatelessWidget {
   final _descController = TextEditingController();
   final AssistanceController controller = Get.put(AssistanceController());
 
+  RequestAssistancePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Directionality(

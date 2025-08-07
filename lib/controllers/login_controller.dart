@@ -2,13 +2,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:kinana_al_sham/services/storage_service.dart';
 import '../views/volunteer_home_view.dart';
 
 class LoginController extends GetxController {
-  final TextEditingController emailController =
-      TextEditingController(); // يستخدم لرقم الهاتف حاليًا
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final isLoading = false.obs;
   final userType = 'مستفيد'.obs;

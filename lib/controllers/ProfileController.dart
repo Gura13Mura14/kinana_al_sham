@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:kinana_al_sham/models/simple_user_model.dart';
@@ -35,7 +34,7 @@ class ProfileController extends GetxController {
 
       print("📥 تم جلب استجابة الملف الشخصي: ${response.statusCode}");
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final data = json.decode(response.body);
         print("✅ تم فك تشفير البيانات: ${data['data']}");
 
@@ -55,7 +54,7 @@ class ProfileController extends GetxController {
 
           print("📷 حالة رد الصورة: ${imageResponse.statusCode}");
 
-          if (imageResponse.statusCode == 200) {
+          if (imageResponse.statusCode == 200 || response.statusCode == 201) {
             print("🖼️ محتوى استجابة الصورة: ${imageResponse.bodyBytes.length} بايت");
             final imageUrl =
                 'http://10.0.2.2:8000/api/volunteers/$id/profile-picture';

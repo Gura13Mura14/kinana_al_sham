@@ -18,7 +18,7 @@ class EmergencyRequestService {
   }) async {
     final token = await _getToken();
     final response = await http.post(
-      Uri.parse('$baseUrl/beneficiaries/emergency-requests'),
+      Uri.parse('$baseUrl/emergency-requests'),
       headers: {
         'Authorization': 'Bearer $token',
         'Accept': 'application/json',
@@ -36,7 +36,7 @@ class EmergencyRequestService {
   Future<List<EmergencyRequest>> getMyRequests() async {
     final token = await _getToken();
     final response = await http.get(
-      Uri.parse('$baseUrl/beneficiaries/emergency/my-requests'),
+      Uri.parse('$baseUrl/emergency/my-requests'),
       headers: {
         'Authorization': 'Bearer $token',
         'Accept': 'application/json',

@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 class OpportunityCard extends StatelessWidget {
   final Opportunity opportunity;
 
-  OpportunityCard({required this.opportunity});
+  const OpportunityCard({super.key, required this.opportunity});
 
   @override
   Widget build(BuildContext context) {

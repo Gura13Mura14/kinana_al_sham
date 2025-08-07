@@ -8,6 +8,8 @@ import 'package:kinana_al_sham/widgets/CustomTextField.dart';
 class BeneficiaryProfileView extends StatelessWidget {
   final controller = Get.put(BeneficiaryController());
 
+ BeneficiaryProfileView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Directionality(

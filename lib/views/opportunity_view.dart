@@ -10,6 +10,8 @@ import '../theme/AppColors.dart';
 class OpportunityView extends StatelessWidget {
   final controller = Get.put(OpportunityController());
 
+   OpportunityView({super.key});
+
  @override
 Widget build(BuildContext context) {
   return Scaffold(

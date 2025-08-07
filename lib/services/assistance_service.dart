@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:kinana_al_sham/models/assistance_request.dart';
 import 'dart:convert';
@@ -6,7 +5,7 @@ import 'package:kinana_al_sham/services/storage_service.dart';
 
 
 class AssistanceService {
-  static const String baseUrl = 'http://10.0.2.2:8000/api/beneficiaries/assistance-requests';
+  static const String baseUrl = 'http://10.0.2.2:8000/api/assistance-requests';
 
   static Future<bool> requestAssistance(String type, String description) async {
     final loginData = await StorageService.getLoginData();

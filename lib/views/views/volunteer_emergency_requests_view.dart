@@ -8,6 +8,8 @@ class VolunteerEmergencyRequestsView extends StatelessWidget {
   final _controller = Get.put(EmergencyRequestController());
   final dateFormat = DateFormat.yMMMMd('ar');
 
+  VolunteerEmergencyRequestsView({super.key});
+
   @override
   Widget build(BuildContext context) {
     _controller.fetchRequestsInMyArea();

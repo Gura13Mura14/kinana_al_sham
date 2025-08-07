@@ -5,6 +5,8 @@ import 'package:kinana_al_sham/theme/AppColors.dart';
 import 'package:kinana_al_sham/widgets/filter_toggle.dart';
 
 class MyApplicationsPage extends StatefulWidget {
+  const MyApplicationsPage({super.key});
+
   @override
   State<MyApplicationsPage> createState() => _MyApplicationsPageState();
 }

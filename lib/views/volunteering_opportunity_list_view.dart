@@ -9,6 +9,8 @@ import 'package:kinana_al_sham/theme/AppColors.dart';
 class VolunteeringOpportunityListView extends StatelessWidget {
   final controller = Get.put(VolunteeringOpportunityController());
 
+   VolunteeringOpportunityListView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

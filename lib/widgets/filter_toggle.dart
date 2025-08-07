@@ -5,10 +5,10 @@ class FilterToggle extends StatelessWidget {
   final void Function(bool) onToggle;
 
   const FilterToggle({
-    Key? key,
+    super.key,
     required this.showOnlyPending,
     required this.onToggle,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

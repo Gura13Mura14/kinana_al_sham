@@ -6,7 +6,7 @@ class TopBarChart extends StatelessWidget {
   final List<String> names;
   final List<double> hours;
 
-  TopBarChart({required this.names, required this.hours});
+  TopBarChart({super.key, required this.names, required this.hours});
 
   final List<IconData> cupIcons = [
      

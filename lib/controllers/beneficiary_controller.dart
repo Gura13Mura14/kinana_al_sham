@@ -8,7 +8,6 @@ import 'package:kinana_al_sham/services/storage_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:http_parser/http_parser.dart';
-import 'package:path/path.dart';
 
 
 class BeneficiaryController extends GetxController {
@@ -32,7 +31,7 @@ class BeneficiaryController extends GetxController {
 
     final token = loginData['token'];
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/beneficiaries/profile'),
+      Uri.parse('http://10.0.2.2:8000/api/profile'),
       headers: {'Authorization': 'Bearer $token'},
     );
 
@@ -54,7 +53,7 @@ class BeneficiaryController extends GetxController {
     final token = loginData['token'];
 
     final response = await http.post(
-      Uri.parse('http://10.0.2.2:8000/api/beneficiaries/update-profile'),
+      Uri.parse('http://10.0.2.2:8000/api/update-profile'),
       headers: {'Authorization': 'Bearer $token'},
       body: {
         'civil_status': civilStatusController.text,
@@ -77,7 +76,7 @@ class BeneficiaryController extends GetxController {
     final token = loginData['token'];
 
     final response = await http.delete(
-      Uri.parse('http://10.0.2.2:8000/api/beneficiaries/documents/$documentId'),
+      Uri.parse('http://10.0.2.2:8000/api/documents/$documentId'),
       headers: {'Authorization': 'Bearer $token'},
     );
 
@@ -94,7 +93,6 @@ class BeneficiaryController extends GetxController {
   if (loginData == null) return;
   final token = loginData['token'];
 
-  // اختر الملف من الجهاز
   final result = await FilePicker.platform.pickFiles(withData: true);
   if (result == null || result.files.isEmpty) return;
 
@@ -102,7 +100,6 @@ class BeneficiaryController extends GetxController {
   final fileName = result.files.single.name;
   final mimeType = lookupMimeType(file.path) ?? 'application/octet-stream';
 
-  // نوع المستند مثلاً بطاقة شخصية أو إثبات سكن..الخ
   final docType = await Get.dialog<String>(
     SimpleDialog(
       title: const Text('اختر نوع المستند'),
@@ -115,14 +112,13 @@ class BeneficiaryController extends GetxController {
           child: const Text('إثبات سكن'),
           onPressed: () => Get.back(result: 'إثبات سكن'),
         ),
-        // أضف أنواع أخرى حسب الحاجة
       ],
     ),
   );
 
   if (docType == null) return;
 
-  final uri = Uri.parse('http://10.0.2.2:8000/api/beneficiaries/update-profile');
+  final uri = Uri.parse('http://10.0.2.2:8000/api/update-profile');
   final request = http.MultipartRequest('POST', uri)
     ..headers['Authorization'] = 'Bearer $token'
     ..fields['documents[0][name]'] = fileName

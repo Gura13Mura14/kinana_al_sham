@@ -3,9 +3,8 @@ import 'package:kinana_al_sham/theme/AppColors.dart';
 
 class AppTheme {
   static final ThemeData lightTheme = ThemeData(
-    scaffoldBackgroundColor: AppColors.grayWhite, // خلفية مريحة
+    scaffoldBackgroundColor: AppColors.grayWhite, 
     primaryColor: AppColors.darkBlue,
-   // fontFamily: 'Cairo',
 
     textTheme: const TextTheme(
       bodyLarge: TextStyle(fontSize: 16, color: AppColors.darkBlue),

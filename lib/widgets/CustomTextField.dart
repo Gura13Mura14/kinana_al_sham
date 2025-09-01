@@ -7,7 +7,8 @@ class CustomTextField extends StatelessWidget {
   final bool isPassword;
   final IconData? icon;
   final int maxLines;
-  final Color? fillColor; // ← جديد
+  final Color? fillColor;
+  final Function(String)? onChanged; // ← جديد
 
   const CustomTextField({
     super.key,
@@ -16,7 +17,8 @@ class CustomTextField extends StatelessWidget {
     this.isPassword = false,
     this.icon,
     this.maxLines = 1,
-    this.fillColor, // ← جديد
+    this.fillColor,
+    this.onChanged, // ← جديد
   });
 
   @override
@@ -27,25 +29,17 @@ class CustomTextField extends StatelessWidget {
         controller: controller,
         maxLines: maxLines,
         obscureText: isPassword,
-        style: const TextStyle(
-          fontSize: 14,
-          color: Colors.black87,
-        ),
+        style: const TextStyle(fontSize: 14, color: Colors.black87),
+        onChanged: onChanged, // ← يدعم التغيير مباشرة
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: const TextStyle(
-            fontSize: 15,
-            color: Colors.grey,
-          ),
-          prefixIcon: icon != null
-              ? Icon(
-                  icon,
-                  size: 20,
-                  color: AppColors.darkBlue,
-                )
-              : null,
+          labelStyle: const TextStyle(fontSize: 15, color: Colors.grey),
+          prefixIcon:
+              icon != null
+                  ? Icon(icon, size: 20, color: AppColors.darkBlue)
+                  : null,
           filled: true,
-          fillColor: fillColor ?? Colors.white, // ← افتراضي أبيض إذا ما حُدد
+          fillColor: fillColor ?? Colors.white,
           border: const UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.grey),
           ),

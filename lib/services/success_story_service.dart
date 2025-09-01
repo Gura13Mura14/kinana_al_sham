@@ -5,15 +5,23 @@ import '../models/success_story.dart';
 import '../services/storage_service.dart';
 
 class SuccessStoryService {
+  final String baseUrl = 'http://10.0.2.2:8000/api';
+
   Future<List<SuccessStory>> fetchPendingStories() async {
     final token = (await StorageService.getLoginData())?['token'];
-    final url = Uri.parse('http://10.0.2.2:8000/api/admin/success-stories/pending');
+    final url = Uri.parse('$baseUrl/admin/success-stories/pending');
 
     final response = await http.get(url, headers: {
+      "Accept": "application/json",
       'Authorization': 'Bearer $token',
     });
 
-    if (response.statusCode == 200) {
+    print("Fetch pending stories status: ${response.statusCode}");
+    print("Response: ${response.body}");
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print("Token: $token");
+
       final data = jsonDecode(response.body)['data'];
       return List<SuccessStory>.from(data.map((e) => SuccessStory.fromJson(e)));
     } else {
@@ -21,7 +29,28 @@ class SuccessStoryService {
     }
   }
 
-  Future<bool> submitStory({
+  Future<List<SuccessStory>> fetchApprovedStories() async {
+  final token = (await StorageService.getLoginData())?['token'];
+  final url = Uri.parse('$baseUrl/success-stories'); // Endpoint يلي بيرجع approved فقط
+
+  final response = await http.get(url, headers: {
+    "Accept": "application/json",
+    'Authorization': 'Bearer $token',
+  });
+
+  print("Fetch approved stories status: ${response.statusCode}");
+  print("Response: ${response.body}");
+
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body) as List;
+    return data.map((e) => SuccessStory.fromJson(e)).toList();
+  } else {
+    throw Exception("فشل تحميل القصص");
+  }
+}
+
+
+  Future<Map<String, dynamic>> submitStory({
     required String title,
     required String content,
     required File image,
@@ -29,14 +58,25 @@ class SuccessStoryService {
     final token = (await StorageService.getLoginData())?['token'];
     final request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://10.0.2.2:8000/api/success-stories'),
+      Uri.parse('$baseUrl/success-stories'),
     );
     request.headers['Authorization'] = 'Bearer $token';
+    request.headers['Accept'] = 'application/json';
     request.fields['title'] = title;
-    request.fields['content'] = content;
+    request.fields['story_content'] = content;
     request.files.add(await http.MultipartFile.fromPath('image', image.path));
 
     final response = await request.send();
-    return response.statusCode == 200 || response.statusCode == 201;
+    final responseBody = await response.stream.bytesToString();
+
+    print("Submit story status: ${response.statusCode}");
+    print("Token: $token");
+    print("Response body: $responseBody");
+
+    return {
+      
+      'statusCode': response.statusCode,
+      'body': responseBody,
+    };
   }
 }

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/success_story.dart';
 import '../services/success_story_service.dart';
+import '../services/storage_service.dart';
 
 class SuccessStoryController extends GetxController {
   final stories = <SuccessStory>[].obs;
@@ -22,6 +23,7 @@ class SuccessStoryController extends GetxController {
       stories.assignAll(result);
     } catch (e) {
       Get.snackbar("خطأ", "تعذر تحميل القصص");
+      print("Error fetching pending stories: $e");
     }
   }
 
@@ -44,21 +46,37 @@ class SuccessStoryController extends GetxController {
 
     isSubmitting.value = true;
 
-    final success = await _service.submitStory(
-      title: titleController.text,
-      content: contentController.text,
-      image: selectedImage!,
-    );
+    try {
+      final result = await _service.submitStory(
+        title: titleController.text,
+        content: contentController.text,
+        image: selectedImage!,
+      );
 
-    isSubmitting.value = false;
+      isSubmitting.value = false;
 
-    if (success) {
-      Get.snackbar("تم الإرسال", "تم إرسال القصة بنجاح");
-      Get.back();
-    } else {
-      Get.snackbar("فشل", "حدث خطأ أثناء الإرسال");
+      if (result['statusCode'] == 200 || result['statusCode'] == 201) {
+        Get.snackbar("تم الإرسال", "تم إرسال القصة بنجاح");
+        Get.back();
+      } else {
+        Get.snackbar("فشل", "حدث خطأ أثناء الإرسال\n${result['body']}");
+      }
+    } catch (e) {
+      isSubmitting.value = false;
+      Get.snackbar("خطأ", "حدث استثناء: $e");
+      print("Exception: $e");
     }
   }
+  Future<void> loadApprovedStories() async {
+  try {
+    final result = await _service.fetchApprovedStories();
+    stories.assignAll(result);
+  } catch (e) {
+    Get.snackbar("خطأ", "تعذر تحميل قصص النجاح");
+    print("Error fetching approved stories: $e");
+  }
+}
+
 
   String translateStatus(String status) {
     switch (status) {

@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:kinana_al_sham/controllers/beneficiary_controller.dart';
 import 'package:kinana_al_sham/theme/AppColors.dart';
 import 'package:kinana_al_sham/widgets/CustomButton.dart';
-import 'package:kinana_al_sham/widgets/CustomTextField.dart';
 
 class BeneficiaryProfileView extends StatelessWidget {
   final controller = Get.put(BeneficiaryController());

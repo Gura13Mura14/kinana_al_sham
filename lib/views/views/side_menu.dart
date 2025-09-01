@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kinana_al_sham/services/get_event_voulenter_service.dart';
+
 import 'package:kinana_al_sham/services/storage_service.dart';
 import 'package:kinana_al_sham/theme/AppColors.dart';
+
+import 'package:kinana_al_sham/views/views/my_event_page.dart';
+import 'package:kinana_al_sham/views/views/my_project_view.dart';
 
 class SideMenu extends StatelessWidget {
   const SideMenu({super.key});
@@ -73,7 +78,6 @@ class SideMenu extends StatelessWidget {
                           }
                         },
                       ),
-
                       /// لوحة الشرف
                       ListTile(
                         leading: const Icon(Icons.star, color: Colors.amber),
@@ -107,6 +111,32 @@ class SideMenu extends StatelessWidget {
                             Get.toNamed('/emergency_requests');
                           },
                         ),
+
+                        ListTile(
+                          leading: const Icon(
+                            Icons.event,
+                            color: Colors.purple,
+                          ),
+                          title: const Text("فعاليتي"),
+                          onTap: () async {
+                            final events =
+                                await EventVolunteerService.getMyEvents();
+                            Get.to(
+                              () => const MyEventsPage(),
+                              arguments: events,
+                            );
+                          },
+                        ),
+                        ListTile(
+                          leading: const Icon(
+                            Icons.dashboard_sharp,
+                            color: Colors.orangeAccent,
+                          ),
+                          title: const Text("مشاريعي "),
+                          onTap: () {
+                            Get.to(() => const MyProjectsPage());
+                          },
+                        ),
                       ],
                       if (userType == 'مستفيد') ...[
                         ListTile(
@@ -135,7 +165,7 @@ class SideMenu extends StatelessWidget {
                             color: Colors.teal,
                           ),
                           title: const Text('كتابة قصة نجاح'),
-                          onTap: (){
+                          onTap: () {
                             Get.toNamed('/success_story_form');
                           },
                         ),
@@ -145,7 +175,7 @@ class SideMenu extends StatelessWidget {
                             color: Colors.teal,
                           ),
                           title: const Text('قصص نجاحي'),
-                          onTap: (){
+                          onTap: () {
                             Get.toNamed('/review_stories');
                           },
                         ),
@@ -161,12 +191,9 @@ class SideMenu extends StatelessWidget {
                           },
                         ),
                         ListTile(
-                          leading: const Icon(
-                            Icons.help,
-                            color: Colors.teal,
-                          ),
+                          leading: const Icon(Icons.help, color: Colors.teal),
                           title: const Text('طلبات مساعدة طارئة'),
-                          onTap: (){
+                          onTap: () {
                             Get.toNamed('/beni_emergency_requests');
                           },
                         ),

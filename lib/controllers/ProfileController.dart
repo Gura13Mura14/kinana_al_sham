@@ -1,120 +1,117 @@
-import 'dart:convert';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'package:kinana_al_sham/models/simple_user_model.dart';
+import 'package:flutter/material.dart';
+import 'package:kinana_al_sham/services/profile_service.dart';
+import 'package:kinana_al_sham/utils/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:kinana_al_sham/models/simple_user_model.dart';
 
 class ProfileController extends GetxController {
+  final ProfileService service;
+  ProfileController(this.service);
+
   final user = Rxn<SimpleUser>();
   final isLoading = false.obs;
+  final isEditing = false.obs;
+
+  // صورة الملف
   final profilePictureUrl = ''.obs;
+  // حقول التحرير
+  final skillsController = TextEditingController();
+  final interestsController = TextEditingController();
+  final emergencyNameController = TextEditingController();
+  final emergencyPhoneController = TextEditingController();
+  final phoneController = TextEditingController();
+  final selectedDistrict = RxnString();
+
+  final formKey = GlobalKey<FormState>();
 
   @override
   void onInit() {
-    fetchUserProfile();
     super.onInit();
+    fetchUserProfile();
+  }
+
+  Future<String?> _token() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('auth_token');
   }
 
   Future<void> fetchUserProfile() async {
     isLoading.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token');
-
-    print("🚀 بدأ جلب الملف الشخصي");
-    print("🔐 التوكن: $token");
-
     try {
-      final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/api/profile'),
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
+      final token = await _token();
+      if (token == null) throw Exception('No token');
 
-      print("📥 تم جلب استجابة الملف الشخصي: ${response.statusCode}");
+      final fetched = await service.fetchProfile(token);
+      user.value = fetched;
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = json.decode(response.body);
-        print("✅ تم فك تشفير البيانات: ${data['data']}");
-
-        user.value = SimpleUser.fromJson(data['data']);
-        print("👤 تم تحويل البيانات إلى SimpleUser: ${user.value}");
-
-        if (user.value != null) {
-          final id = user.value!.id;
-          print("📸 جاري جلب صورة المستخدم مع ID = $id");
-
-          final imageResponse = await http.get(
-            Uri.parse(
-              'http://10.0.2.2:8000/api/volunteers/$id/profile-picture',
-            ),
-            
-          );
-
-          print("📷 حالة رد الصورة: ${imageResponse.statusCode}");
-
-          if (imageResponse.statusCode == 200 || response.statusCode == 201) {
-            print("🖼️ محتوى استجابة الصورة: ${imageResponse.bodyBytes.length} بايت");
-            final imageUrl =
-                'http://10.0.2.2:8000/api/volunteers/$id/profile-picture';
-            user.value = user.value?.copyWith(profilePictureUrl: imageUrl);
-            profilePictureUrl.value = imageUrl;
-            print("✅ تم تعيين رابط الصورة: $imageUrl");
-          } else {
-            print("❌ فشل في تحميل الصورة: ${imageResponse.body}");
-          }
-        }
-      } else {
-        print("❌ فشل في جلب البيانات: ${response.body}");
+      // صورة
+      final url = await service.fetchProfilePicture(fetched.id);
+      if (url != null) {
+        profilePictureUrl.value = url;
+        user.value = user.value?.copyWith(profilePictureUrl: url);
       }
+
+      // تهيئة الحقول من الموديل
+      _fillControllersFromModel();
     } catch (e) {
-      print("💥 استثناء أثناء جلب الملف الشخصي: $e");
+      Get.snackbar('خطأ', 'فشل في جلب الملف الشخصي');
     } finally {
       isLoading.value = false;
-      print("🏁 انتهى تحميل الملف الشخصي");
     }
   }
 
-  Future<void> updateVolunteerProfile(Map<String, dynamic> updatedData) async {
-    print("✏️ بدأ تحديث بيانات الملف الشخصي");
-    print("📦 البيانات المحدثة: $updatedData");
+  void _fillControllersFromModel() {
+    final u = user.value;
+    if (u == null) return;
+    skillsController.text = u.volunteerDetails?.skills ?? '';
+    interestsController.text = u.volunteerDetails?.interests ?? '';
+    emergencyNameController.text =
+        u.volunteerDetails?.emergencyContactName ?? '';
+    emergencyPhoneController.text =
+        u.volunteerDetails?.emergencyContactPhone ?? '';
+    phoneController.text = u.phoneNumber ?? '';
 
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString(
-      'auth_token',
-    ); // ✅ تأكد من استخدام نفس المفتاح كما في fetchUserProfile
+    final addr = u.volunteerDetails?.address ?? '';
+    if (AppConstants.damascusDistricts.contains(addr)) {
+      selectedDistrict.value = addr;
+    } else {
+      selectedDistrict.value = null; // غير محدد أو غير موجود
+    }
+  }
 
-    print("🔐 التوكن المستخدم: $token");
+  void toggleEdit() {
+    isEditing.toggle();
+    if (isEditing.isTrue) {
+      _fillControllersFromModel();
+    }
+  }
 
-    try {
-      final url = Uri.parse('http://10.0.2.2:8000/api/volunteer/profile');
-      print("🌐 إرسال طلب PUT إلى: $url");
+  Future<void> save() async {
+    if (!(formKey.currentState?.validate() ?? false)) return;
 
-      final response = await http.put(
-        url,
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-        body: json.encode(updatedData),
-      );
+    final token = await _token();
+    if (token == null) {
+      Get.snackbar('خطأ', 'لا يوجد صلاحية');
+      return;
+    }
 
-      print("📥 استجابة التحديث: ${response.statusCode}");
-      print("📄 محتوى الرد: ${response.body}");
+    final updatedData = {
+      'skills': skillsController.text.trim(),
+      'interests': interestsController.text.trim(),
+      'emergency_contact_name': emergencyNameController.text.trim(),
+      'emergency_contact_phone': emergencyPhoneController.text.trim(),
+      'address': selectedDistrict.value ?? '',
+      'phone_number': phoneController.text.trim(),
+    };
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        print("✅ تم التحديث بنجاح");
-        Get.snackbar("نجاح", "تم تحديث الملف الشخصي بنجاح");
-        await fetchUserProfile(); // إعادة تحميل البيانات
-      } else {
-        print("❌ فشل التحديث، حالة الرد: ${response.statusCode}");
-        Get.snackbar("خطأ", "فشل في التحديث: ${response.body}");
-      }
-    } catch (e) {
-      print("💥 استثناء أثناء التحديث: $e");
-      Get.snackbar("خطأ", "حدث خطأ أثناء التحديث");
+    final ok = await service.updateVolunteerProfile(token, updatedData);
+    if (ok) {
+      Get.snackbar('نجاح', 'تم تحديث الملف الشخصي');
+      await fetchUserProfile();
+      isEditing.value = false;
+    } else {
+      Get.snackbar('خطأ', 'فشل التحديث');
     }
   }
 }

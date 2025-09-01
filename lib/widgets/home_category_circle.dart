@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kinana_al_sham/theme/AppColors.dart';
+import '../theme/AppColors.dart';
 
 class HomeCategoryCircle extends StatefulWidget {
   final String title;
@@ -12,7 +12,7 @@ class HomeCategoryCircle extends StatefulWidget {
     required this.title,
     required this.imagePath,
     required this.onTap,
-    this.size = 65,
+    this.size = 50, // تصغير الحجم
   });
 
   @override
@@ -22,18 +22,13 @@ class HomeCategoryCircle extends StatefulWidget {
 class _HomeCategoryCircleState extends State<HomeCategoryCircle> {
   double scale = 1.0;
 
-  void _onTapDown(TapDownDetails details) {
-    setState(() => scale = 1.2); 
-  }
-
+  void _onTapDown(TapDownDetails details) => setState(() => scale = 1.2);
   void _onTapUp(TapUpDetails details) {
     setState(() => scale = 1.0);
-    widget.onTap(); 
+    widget.onTap();
   }
 
-  void _onTapCancel() {
-    setState(() => scale = 1.0);
-  }
+  void _onTapCancel() => setState(() => scale = 1.0);
 
   @override
   Widget build(BuildContext context) {
@@ -58,17 +53,17 @@ class _HomeCategoryCircleState extends State<HomeCategoryCircle> {
               child: Container(
                 width: widget.size,
                 height: widget.size,
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(8),
                 child: Image.asset(widget.imagePath),
               ),
             ),
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
         Text(
           widget.title,
-          style: const TextStyle(
-            fontSize: 13,
+          style: TextStyle(
+            fontSize: 12,
             fontWeight: FontWeight.w600,
             color: AppColors.darkBlue,
           ),

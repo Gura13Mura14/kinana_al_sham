@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "880013672392",
+    "project_id": "kinanaalsham-b5817",
+    "storage_bucket": "kinanaalsham-b5817.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:880013672392:android:b9f6713799160df43bcafd",
+        "android_client_info": {
+          "package_name": "com.example.kinana_al_sham"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtq39iYYtuRc68i8W0lotGoZbjexzdeFk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

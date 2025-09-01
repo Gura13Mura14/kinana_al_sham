@@ -88,7 +88,7 @@ class AssociationGrowthChart extends StatelessWidget {
                   ),
                 ),
                 minX: 0,
-                maxX: 4,
+                maxX: 8,
                 minY: 0,
                 maxY: 100,
                 lineBarsData: [
@@ -116,11 +116,14 @@ class AssociationGrowthChart extends StatelessWidget {
                       ),
                     ),
                     spots: const [
-                      FlSpot(0, 20), // 2020
-                      FlSpot(1, 10), // 2021
-                      FlSpot(2, 70), // 2022
+                      FlSpot(0, 40), // 2020
+                      FlSpot(1, 100), // 2021
+                      FlSpot(2, 30), // 2022
                       FlSpot(3, 50), // 2023
-                      FlSpot(4, 90), // 2024
+                      FlSpot(4, 60), // 2024
+                       FlSpot(5, 30), // 2022
+                      FlSpot(6, 50), // 2023
+                      FlSpot(7, 60), // 2024
                     ],
                   ),
                 ],

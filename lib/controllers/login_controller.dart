@@ -1,65 +1,61 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'package:kinana_al_sham/services/storage_service.dart';
-import '../views/volunteer_home_view.dart';
+import 'package:kinana_al_sham/services/login_service.dart';
+import 'package:kinana_al_sham/views/volunteer_home_view.dart';
+import 'package:kinana_al_sham/widgets/custom_snackbar.dart';
 
 class LoginController extends GetxController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
   final isLoading = false.obs;
   final userType = 'مستفيد'.obs;
 
   void login() async {
-    final phone = emailController.text.trim();
+    final phoneOrEmail = emailController.text.trim();
     final password = passwordController.text.trim();
 
-    if (phone.isEmpty || password.isEmpty) {
-      Get.snackbar('خطأ', 'يرجى إدخال كل الحقول');
+    if (phoneOrEmail.isEmpty || password.isEmpty) {
+      showCustomSnackbar(
+        title: 'خطأ',
+        message: 'يرجى إدخال كل الحقول',
+        isError: true,
+      );
       return;
     }
 
     isLoading.value = true;
 
-    final url =
-        userType.value == 'متطوع'
-            ? 'http://10.0.2.2:8000/api/login'
-            : 'http://10.0.2.2:8000/api/beneficiaries/login';
-
-    final credentials =
-        userType.value == 'متطوع'
-            ? {'email': phone, 'password': password}
-            : {'phone_number': phone, 'password': password};
-
     try {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: {'Accept': 'application/json'},
-        body: credentials,
+      final result = await LoginService.login(
+        userType: userType.value,
+        phoneOrEmail: phoneOrEmail,
+        password: password,
       );
 
-      final data = json.decode(response.body);
-      if (response.statusCode == 200) {
-        final token = data['token'];
+      final status = result['status'] as int;
+      final data = result['data'];
+
+      if (status == 200) {
         final name = data['user']['name'];
-
-        await StorageService.saveLoginData(
-          token: token,
-          userType: userType.value,
-          userName: name,
-        );
-
         if (userType.value == 'متطوع') {
           Get.offAll(() => VolunteerHomeView(), arguments: name);
         } else {
           Get.offAllNamed('/home2', arguments: name);
         }
       } else {
-        Get.snackbar('فشل الدخول', data['message'] ?? 'حدث خطأ');
+        showCustomSnackbar(
+          title: 'فشل الدخول',
+          message: data['message'] ?? 'حدث خطأ',
+          isError: true,
+        );
       }
     } catch (e) {
-      Get.snackbar('خطأ', 'حدث خطأ غير متوقع');
+      showCustomSnackbar(
+        title: 'خطأ',
+        message: 'حدث خطأ غير متوقع',
+        isError: true,
+      );
     } finally {
       isLoading.value = false;
     }

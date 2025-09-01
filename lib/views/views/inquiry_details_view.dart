@@ -160,7 +160,7 @@ class InquiryDetailsView extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 16),
                     child: Text(
-                      'هذه المحادثة مغلقة.\nإذا أردت التواصل من جديد، يرجى فتح استفسار جديد من خلال الزر في الصفحة الرئيسية.',
+                      'هذه المحادثة مغلقة',
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.grey),
                     ),

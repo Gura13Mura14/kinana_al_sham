@@ -4,6 +4,7 @@ import 'package:kinana_al_sham/controllers/honor_board_controller.dart';
 import 'package:kinana_al_sham/services/get_event_voulenter_service.dart';
 import 'package:kinana_al_sham/services/storage_service.dart';
 import 'package:kinana_al_sham/theme/AppColors.dart';
+import 'package:kinana_al_sham/views/views/certificate%20view.dart';
 import 'package:kinana_al_sham/views/views/my_event_page.dart';
 import 'package:kinana_al_sham/views/views/my_project_view.dart';
 
@@ -127,6 +128,16 @@ class SideMenu extends StatelessWidget {
                           title: const Text("مشاريعي "),
                           onTap: () {
                             Get.to(() => const MyProjectsPage());
+                          },
+                        ),
+                        ListTile(
+                          leading: const Icon(
+                            Icons.card_membership,
+                            color: Colors.redAccent,
+                          ),
+                          title: const Text("شهاداتي"),
+                          onTap: () {
+                            Get.to(() => const CertificatesScreen());
                           },
                         ),
                       ],

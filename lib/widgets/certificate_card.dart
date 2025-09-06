@@ -39,15 +39,9 @@ class CertificateCard extends StatelessWidget {
           ],
 
           /// 🔹 إطار أعرض + ألوان متدرجة
-          border: Border.all(
-            width: 6,
-            color: Colors.transparent,
-          ),
+          border: Border.all(width: 6, color: Colors.transparent),
           gradient: LinearGradient(
-            colors: [
-              AppColors.darkBlue,
-              AppColors.pinkBeige,
-            ],
+            colors: [AppColors.darkBlue, AppColors.pinkBeige],
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
           ),
@@ -61,10 +55,12 @@ class CertificateCard extends StatelessWidget {
           child: Column(
             children: [
               Padding(padding: EdgeInsets.only(top: 40)),
+
               /// 🔹 صورة اللوغو مع شفافية
               ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(12)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(12),
+                ),
                 child: Opacity(
                   opacity: 0.85, // 🔹 شفافية
                   child: Image.asset(
@@ -78,17 +74,19 @@ class CertificateCard extends StatelessWidget {
 
               Padding(
                 padding: EdgeInsets.symmetric(
-                    horizontal: r.wp(6), vertical: r.hp(4)),
+                  horizontal: r.wp(6),
+                  vertical: r.hp(4),
+                ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       "شهادة مشاركة",
                       style: TextStyle(
-                        fontFamily: "Amiri", 
+                        fontFamily: "Amiri", // 📌 للتحميل من Google Fonts
                         fontSize: r.sp(30),
                         fontWeight: FontWeight.bold,
-                        color: AppColors.pinkBeige, 
+                        color: AppColors.pinkBeige, // 🔹 لون جديد
                         decoration: TextDecoration.none,
                       ),
                     ),
@@ -105,7 +103,6 @@ class CertificateCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: r.hp(2)),
-
                     Text(
                       volunteerName,
                       style: TextStyle(
@@ -117,7 +114,6 @@ class CertificateCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: r.hp(3)),
-
                     Text(
                       "وذلك تقديراً لمشاركته الفعّالة في:\n$eventName",
                       textAlign: TextAlign.center,
@@ -165,11 +161,7 @@ class CertificateCard extends StatelessWidget {
 
     return Column(
       children: [
-        Container(
-          width: r.wp(25),
-          height: 1.5,
-          color: AppColors.pinkBeige,
-        ),
+        Container(width: r.wp(25), height: 1.5, color: AppColors.pinkBeige),
         SizedBox(height: r.hp(1)),
         Text(
           title,

@@ -2,15 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kinana_al_sham/controllers/task_controller.dart';
 import 'package:kinana_al_sham/models/task.dart';
-import 'package:kinana_al_sham/theme/AppColors.dart';
+import 'package:kinana_al_sham/services/storage_service.dart';
 import 'package:timeline_tile/timeline_tile.dart';
+import 'package:kinana_al_sham/theme/AppColors.dart';
 
-class RoadmapTimelineView extends StatelessWidget {
+class RoadmapTimelineView extends StatefulWidget {
   final int roadmapId;
+  final int? supervisorUserId; // id المشرف للـ roadmap
 
-  const RoadmapTimelineView({super.key, required this.roadmapId});
+  const RoadmapTimelineView({
+    super.key,
+    required this.roadmapId,
+    this.supervisorUserId,
+  });
 
-  void showAddTaskDialog(BuildContext context, TaskController controller) {
+  @override
+  State<RoadmapTimelineView> createState() => _RoadmapTimelineViewState();
+}
+
+class _RoadmapTimelineViewState extends State<RoadmapTimelineView> {
+  final TaskController controller = Get.put(TaskController());
+  int? currentUserId;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentUserId();
+    //controller.fetchTasks(widget.roadmapId); // تأكد من جلب المهام
+  }
+
+  Future<void> _loadCurrentUserId() async {
+    final data = await StorageService.getLoginData(); // ✅ استخدام StorageService
+    if (data != null) {
+      setState(() {
+        currentUserId = data['user_id'];
+      });
+      print("✅ Current userId loaded: $currentUserId");
+    } else {
+      print("❌ لم يتم العثور على userId في StorageService");
+    }
+  }
+
+  void showAddTaskDialog() {
     final titleController = TextEditingController();
     final descriptionController = TextEditingController();
     final durationController = TextEditingController();
@@ -62,7 +95,7 @@ class RoadmapTimelineView extends StatelessWidget {
         }
 
         controller.addTask(
-          roadmapId: roadmapId,
+          roadmapId: widget.roadmapId,
           title: title,
           description: description,
           durationInDays: duration,
@@ -76,10 +109,11 @@ class RoadmapTimelineView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TaskController controller = Get.put(TaskController());
+    final isSupervisor = currentUserId != null &&
+        widget.supervisorUserId != null &&
+        currentUserId == widget.supervisorUserId;
 
     return Scaffold(
-      // الغينا الـ AppBar
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
@@ -115,117 +149,102 @@ class RoadmapTimelineView extends StatelessWidget {
           );
         }
 
-        return Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                AppColors.darkBlue,
-                AppColors.bluishGray,
-                AppColors.pinkBeige,
-                AppColors.grayWhite,
-                AppColors.pureWhite,
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-            itemCount: controller.tasks.length,
-            itemBuilder: (context, index) {
-              final Task task = controller.tasks[index];
-              return TimelineTile(
-                alignment: TimelineAlign.start,
-                isFirst: index == 0,
-                isLast: index == controller.tasks.length - 1,
-                lineXY: 0.05,
-                indicatorStyle: IndicatorStyle(
-                  width: 30,
-                  height: 30,
-                  indicator: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.darkBlue,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Center(
-                      child: Text(
-                        "${index + 1}",
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
+        return ListView.builder(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+          itemCount: controller.tasks.length,
+          itemBuilder: (context, index) {
+            final Task task = controller.tasks[index];
+            return TimelineTile(
+              alignment: TimelineAlign.start,
+              isFirst: index == 0,
+              isLast: index == controller.tasks.length - 1,
+              lineXY: 0.05,
+              indicatorStyle: IndicatorStyle(
+                width: 30,
+                height: 30,
+                indicator: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.darkBlue,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Text(
+                      "${index + 1}",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
                       ),
                     ),
                   ),
                 ),
-                beforeLineStyle: const LineStyle(
-                  color: AppColors.pinkBeige,
-                  thickness: 3,
-                ),
-                afterLineStyle: const LineStyle(
-                  color: AppColors.pinkBeige,
-                  thickness: 3,
-                ),
-                endChild: AnimatedTaskCard(
-                  task: task,
-                  delay: index * 200,
-                  centerText: true,
-                ),
-              );
-            },
-          ),
+              ),
+              beforeLineStyle: const LineStyle(
+                color: AppColors.pinkBeige,
+                thickness: 3,
+              ),
+              afterLineStyle: const LineStyle(
+                color: AppColors.pinkBeige,
+                thickness: 3,
+              ),
+              endChild: AnimatedTaskCard(
+                task: task,
+                delay: index * 200,
+                centerText: true,
+              ),
+            );
+          },
         );
       }),
-
-      bottomNavigationBar: Container(
-        margin: const EdgeInsets.all(16),
-        height: 50,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          gradient: const LinearGradient(
-            colors: [AppColors.darkBlue, AppColors.pinkBeige],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(24),
-            onTap: () => showAddTaskDialog(context, controller),
-            child: const Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.add, color: Colors.white, size: 22),
-                  SizedBox(width: 8),
-                  Text(
-                    " اضافة مهمة ",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+      bottomNavigationBar: isSupervisor
+          ? Container(
+              margin: const EdgeInsets.all(16),
+              height: 50,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                gradient: const LinearGradient(
+                  colors: [AppColors.darkBlue, AppColors.pinkBeige],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(24),
+                  onTap: showAddTaskDialog,
+                  child: const Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.add, color: Colors.white, size: 22),
+                        SizedBox(width: 8),
+                        Text(
+                          " اضافة مهمة ",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ),
-      ),
+            )
+          : null,
     );
   }
 }
+
 
 class AnimatedTaskCard extends StatefulWidget {
   final Task task;

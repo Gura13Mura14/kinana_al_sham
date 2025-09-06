@@ -105,40 +105,39 @@ class ProjectDetailsView extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     // زر حسب نوع المستخدم
-                    FutureBuilder<Map<String, String>?>(
-                      future: StorageService.getLoginData(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
+                    FutureBuilder<Map<String, dynamic>?>(
+  future: StorageService.getLoginData(),
+  builder: (context, snapshot) {
+    if (!snapshot.hasData) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-                        final userType = snapshot.data!['user_type'];
+    final userType = snapshot.data!['user_type'];
 
-                        if (userType == 'متطوع') {
-                          return _buildActionButton(
-                            text: "تسجيل كمتطوع",
-                            onPressed: () async {
-                              await VolunteerService.registerVolunteer(
-                                project.id,
-                              );
-                            },
-                          );
-                        } else if (userType == 'مستفيد') {
-                          return _buildActionButton(
-                            text: "تقييم المشروع",
-                            onPressed: () {
-                              Get.to(
-                                () => CommentProjectPage(projectId: project.id),
-                              );
-                            },
-                          );
-                        } else {
-                          return const SizedBox();
-                        }
-                      },
-                    ),
+    if (userType == 'متطوع') {
+      return _buildActionButton(
+        text: "تسجيل كمتطوع",
+        onPressed: () async {
+          await VolunteerService.registerVolunteer(
+            project.id,
+          );
+        },
+      );
+    } else if (userType == 'مستفيد') {
+      return _buildActionButton(
+        text: "تقييم المشروع",
+        onPressed: () {
+          Get.to(
+            () => CommentProjectPage(projectId: project.id),
+          );
+        },
+      );
+    } else {
+      return const SizedBox();
+    }
+  },
+),
+
                   ],
                 ),
               ),
@@ -220,6 +219,7 @@ class ProjectDetailsView extends StatelessWidget {
     );
   }
 }
+
 // Custom Clipper لشكل الموجة
 class WaveClipper extends CustomClipper<Path> {
   @override

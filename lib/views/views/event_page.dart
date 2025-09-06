@@ -23,23 +23,30 @@ class _EventsPageState extends State<EventsPage> {
     PostRoadmapController(),
   );
 
-  String userType = ''; // نوع المستخدم
+  int? currentUserId; // userId للمستخدم الحالي
 
   @override
   void initState() {
     super.initState();
-    _loadUserType();
+    _initData();
+  }
+
+  Future<void> _initData() async {
+    await _loadCurrentUserId(); // يستنى تحميل الـ userId أولاً
     final now = DateTime.now();
     eventController.fetchEventsByMonth(now.month, now.year);
     postRoadmapController.fetchAllRoadmaps();
   }
 
-  Future<void> _loadUserType() async {
-    final loginData = await StorageService.getLoginData();
-    if (loginData != null) {
+  Future<void> _loadCurrentUserId() async {
+    final data = await StorageService.getLoginData();
+    if (data != null) {
       setState(() {
-        userType = loginData['user_type']!;
+        currentUserId = data['user_id']; // 👈 صار يجيب من StorageService
       });
+      print("✅ Current user loaded: $currentUserId");
+    } else {
+      print("❌ ما لقيت userId بالـ StorageService");
     }
   }
 
@@ -191,7 +198,6 @@ class _EventsPageState extends State<EventsPage> {
               return const Center(child: Text("لا توجد فعاليات لهذا الشهر"));
             }
 
-            // استخدم Expanded مع ListView لتجنب overflow
             return Column(
               children: [
                 Expanded(
@@ -200,7 +206,9 @@ class _EventsPageState extends State<EventsPage> {
                     itemCount: eventController.events.length,
                     itemBuilder: (context, index) {
                       final event = eventController.events[index];
-
+                      print(
+                        "Event ${event.id} supervised by ${event.supervisorUserId}, current user: $currentUserId",
+                      );
                       return InkWell(
                         borderRadius: BorderRadius.circular(24),
                         onTap: () async {
@@ -270,8 +278,9 @@ class _EventsPageState extends State<EventsPage> {
                                 ),
                               ),
 
-                              // أيقونة Roadmap تظهر فقط للمتطوع
-                              if (userType == "متطوع")
+                              // أيقونة Roadmap تظهر فقط إذا المستخدم هو المشرف
+                              if (currentUserId != null &&
+                                  currentUserId == event.supervisorUserId)
                                 IconButton(
                                   icon: const Icon(
                                     Icons.add_road,

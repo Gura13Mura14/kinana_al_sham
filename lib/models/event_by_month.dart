@@ -6,6 +6,7 @@ class Event {
   final String endDatetime;
   final String? locationText; // صار nullable
   final String status;
+  final int? supervisorUserId; // جديد: المشرف
 
   Event({
     required this.id,
@@ -15,6 +16,7 @@ class Event {
     required this.endDatetime,
     this.locationText,
     required this.status,
+    this.supervisorUserId, // جديد
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,7 @@ class Event {
       endDatetime: json['end_datetime'] ?? '',
       locationText: json['location_text'], // ممكن يجي null
       status: json['status'] ?? '',
+      supervisorUserId: json['supervisor_user_id'], // جديد
     );
   }
 }

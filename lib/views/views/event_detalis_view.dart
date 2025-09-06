@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:kinana_al_sham/models/event_detalis.dart';
 import 'package:kinana_al_sham/services/event_register_service.dart';
 import 'package:kinana_al_sham/services/post-road-map-service.dart';
+
 import 'package:kinana_al_sham/services/storage_service.dart';
 import 'package:kinana_al_sham/theme/AppColors.dart';
 import 'package:kinana_al_sham/controllers/event_register_controller.dart';
@@ -196,6 +197,8 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                                   Get.to(
                                     () => RoadmapTimelineView(
                                       roadmapId: roadmap.id,
+                                      supervisorUserId:
+                                          event.supervisor?.id, // تعديل هنا
                                     ),
                                   );
                                 } catch (e) {

@@ -36,15 +36,16 @@ return null; // لا توجد صورة
 
 
 Future<bool> updateVolunteerProfile(String token, Map<String, dynamic> updated) async {
-final res = await _client.put(
-Uri.parse('${AppConstants.baseUrl}/volunteer/profile'),
-headers: {
-'Accept': 'application/json',
-'Authorization': 'Bearer $token',
-'Content-Type': 'application/json',
-},
-body: json.encode(updated),
-);
-return res.statusCode == 200 || res.statusCode == 201;
+  final res = await _client.put(
+    Uri.parse('${AppConstants.baseUrl}/volunteer/profile'),
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    },
+    body: json.encode(updated),
+  );
+  return res.statusCode == 200 || res.statusCode == 201;
 }
+
 }

@@ -5,14 +5,15 @@ import 'package:kinana_al_sham/controllers/opportunity_controller.dart';
 import 'package:kinana_al_sham/controllers/register_controller.dart';
 import 'package:kinana_al_sham/controllers/volunteering_opportunity_controller.dart';
 import 'package:kinana_al_sham/services/profile_service.dart';
+import 'package:kinana_al_sham/views/announced_course_page.dart';
 import 'package:kinana_al_sham/views/beneficiary_home_view.dart';
 import 'package:kinana_al_sham/views/beneficiary_profile_view.dart';
 import 'package:kinana_al_sham/views/opportunity_view.dart';
 import 'package:kinana_al_sham/views/register_view.dart';
+import 'package:kinana_al_sham/views/views/WalletView.dart';
 import 'package:kinana_al_sham/views/views/beneficiary_emergency_request_view.dart';
 import 'package:kinana_al_sham/views/views/beni_emergency_requests_view.dart';
 import 'package:kinana_al_sham/views/views/beni_requests_page.dart';
-import 'package:kinana_al_sham/views/views/courses_list.dart';
 import 'package:kinana_al_sham/views/views/inquiry_list_view.dart';
 import 'package:kinana_al_sham/views/views/my_applications_page.dart';
 import 'package:kinana_al_sham/views/views/profile_details_view.dart';
@@ -62,6 +63,7 @@ class AppPages {
         Get.put(ProfileController(ProfileService()));
       }),
     ),
+    GetPage(name: '/wallet_view', page: () => WalletView()),
 
     //GetPage(name: '/HonorBoard', page: () => HonorBoardPage()),
     GetPage(name: '/Inquiry', page: () => InquiryListView()),
@@ -90,6 +92,6 @@ class AppPages {
       name: '/beneficiary_emergency_request',
       page: () => BeneficiaryEmergencyRequestView(),
     ),
-    GetPage(name: '/courses_list', page: () => CoursesListPage()),
+    GetPage(name: '/courses_list', page: () => AnnouncedCoursePage()),
   ];
 }

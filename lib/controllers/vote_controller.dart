@@ -1,33 +1,17 @@
 import 'package:get/get.dart';
-import 'package:kinana_al_sham/services/course_api_service.dart';
-import '../models/vote_response.dart';
+import '../services/course_api_service.dart';
 
 class VoteController extends GetxController {
-  final ApiService api = ApiService();
-
-  var voting = false.obs;
-  var votesMap = <int, RxInt>{}; // key: courseId, value: votes count
-
-  Future<void> vote(int courseId) async {
-    try {
-      voting.value = true;
-      final res = await api.postVote(courseId);
-      if (res.success) {
-        if (!votesMap.containsKey(courseId)) {
-          votesMap[courseId] = res.totalVotes.obs;
-        } else {
-          votesMap[courseId]!.value = res.totalVotes;
-        }
-      }
-    } finally {
-      voting.value = false;
-    }
+  var votesMap = <int, RxInt>{};
+  RxInt getVotes(int courseId) {
+    votesMap.putIfAbsent(courseId, () => 0.obs);
+    return votesMap[courseId]!;
   }
 
-  RxInt getVotes(int courseId) {
-    if (!votesMap.containsKey(courseId)) {
-      votesMap[courseId] = 0.obs;
+  Future<void> vote(int courseId) async {
+    final data = await ApiService.postRequest("$courseId/vote");
+    if (data['success']) {
+      getVotes(courseId).value = data['total_votes'];
     }
-    return votesMap[courseId]!;
   }
 }

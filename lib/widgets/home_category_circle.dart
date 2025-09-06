@@ -12,7 +12,7 @@ class HomeCategoryCircle extends StatefulWidget {
     required this.title,
     required this.imagePath,
     required this.onTap,
-    this.size = 50, // تصغير الحجم
+    this.size = 55, 
   });
 
   @override

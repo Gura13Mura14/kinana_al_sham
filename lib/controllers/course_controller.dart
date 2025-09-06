@@ -2,24 +2,29 @@ import 'package:get/get.dart';
 import 'package:kinana_al_sham/services/course_api_service.dart';
 import '../models/course.dart';
 
-
 class CourseController extends GetxController {
-  final ApiService api = ApiService();
-
   var course = Rxn<Course>();
-  var loading = false.obs;
 
-  Future<void> loadCourse(int id) async {
-    try {
-      loading.value = true;
-      course.value = await api.getCourseById(id);
-    } finally {
-      loading.value = false;
+  Future<void> fetchCourseDetails(int id) async {
+    final data = await ApiService.getRequest("courses/$id");
+    if (data['success']) {
+      course.value = Course.fromJson(data['data']);
     }
   }
 
-  Future<bool> register(int id) async {
-    final res = await api.postRegister(id);
-    return res['success'] == true;
+Future<Map<String, dynamic>> register(int id) async {
+  final data = await ApiService.postRequest("courses/$id/register");
+  return {
+    "success": data['success'] ?? false,
+    "message": data['message'] ?? "حدث خطأ أثناء التسجيل"
+  };
+}
+
+
+  Future<void> fetchAnnouncedCourse() async {
+    final data = await ApiService.getRequest("volunteer/news");
+    if (data['success']) {
+      course.value = Course.fromJson(data['data']);
+    }
   }
 }

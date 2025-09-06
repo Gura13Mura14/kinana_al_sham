@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kinana_al_sham/controllers/ProfileController.dart';
+import 'package:kinana_al_sham/controllers/notification_controller.dart';
 import 'package:kinana_al_sham/controllers/success_story_controller.dart';
 import 'package:kinana_al_sham/services/profile_service.dart';
 import 'package:kinana_al_sham/theme/AppColors.dart';
-import 'package:kinana_al_sham/views/views/courses_list.dart';
+
+import 'package:kinana_al_sham/views/views/courses_list_page.dart';
 import 'package:kinana_al_sham/views/views/event_page.dart';
+import 'package:kinana_al_sham/views/views/notifications_page.dart';
 import 'package:kinana_al_sham/views/views/side_menu.dart';
 import 'package:kinana_al_sham/views/views/association_growth_chart.dart';
 import 'package:kinana_al_sham/widgets/home_category_circle.dart';
@@ -22,19 +25,18 @@ class BeneficiaryHomeView extends StatefulWidget {
 class _BeneficiaryHomeViewState extends State<BeneficiaryHomeView> {
   final profileController = Get.put(ProfileController(ProfileService()));
   final successStoryController = Get.put(SuccessStoryController());
+  final notificationController = Get.put(NotificationController());
 
   @override
   void initState() {
     super.initState();
-    // ⬅️ جلب القصص الموافق عليها أول ما يفتح الصفحة
     successStoryController.loadApprovedStories();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
-      endDrawer: const SideMenu(),
+      endDrawer:  SideMenu(),
       backgroundColor: AppColors.grayWhite,
       body: Column(
         children: [
@@ -49,69 +51,54 @@ class _BeneficiaryHomeViewState extends State<BeneficiaryHomeView> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Obx(() {
-                          final user = profileController.user.value;
-                          final imageUrl = user?.profilePictureUrl;
-            
-                          return GestureDetector(
-                            onTap: () => Get.toNamed('/beneficiary-profile'),
-                            child: Container(
-                              padding: const EdgeInsets.all(3),
-                              decoration: BoxDecoration(
-                                color: AppColors.pureWhite,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    blurRadius: 6,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                                shape: BoxShape.circle,
-                              ),
-                              child: CircleAvatar(
-                                radius: 20,
-                                backgroundImage: imageUrl != null
-                                    ? NetworkImage(imageUrl)
-                                    : const AssetImage(
-                                        'lib/assets/images/Profile1.webp',
-                                      ) as ImageProvider,
-                              ),
-                            ),
-                          );
-                        }),
-                        Builder(
-                          builder: (context) => Container(
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                              color: AppColors.pureWhite,
-                              shape: BoxShape.circle,
-                            ),
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.menu,
-                                size: 28,
-                                color: AppColors.darkBlue,
-                              ),
-                              onPressed: () => Scaffold.of(context).openEndDrawer(),
-                            ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.notifications,
+                            size: 28,
+                            color: AppColors.darkBlue,
                           ),
+                          onPressed: () {
+                            Get.to(() => NotificationsPage());
+                          },
+                        ),
+
+                        Builder(
+                          builder:
+                              (context) => Container(
+                                decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                  color: AppColors.pureWhite,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: IconButton(
+                                  icon: const Icon(
+                                    Icons.menu,
+                                    size: 28,
+                                    color: AppColors.darkBlue,
+                                  ),
+                                  onPressed:
+                                      () =>
+                                          Scaffold.of(context).openEndDrawer(),
+                                ),
+                              ),
                         ),
                       ],
                     ),
-            
-                   
-            
-                    const SizedBox(height: 8),
-            
+
+                    const SizedBox(height: 12),
+                    Container(
+                      height: 1,
+                      color: AppColors.darkBlue.withOpacity(0.3),
+                    ),
                     // الدوائر الأفقية للخدمات
                     SizedBox(
-                      height: 120,
+                      height: 100,
                       child: Center(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -135,6 +122,7 @@ class _BeneficiaryHomeViewState extends State<BeneficiaryHomeView> {
                             ),
                             const SizedBox(width: 40),
                             HomeCategoryCircle(
+                              size: 70,
                               title: 'مشاريع ',
                               imagePath: 'lib/assets/images/project1.jpg',
                               onTap: () {
@@ -145,18 +133,13 @@ class _BeneficiaryHomeViewState extends State<BeneficiaryHomeView> {
                         ),
                       ),
                     ),
-                     const SizedBox(height: 8),
-            
-                    // ✅ عرض قصص النجاح
-                    Obx(() {
-                      if (successStoryController.stories.isEmpty) {
-                        return const Center(child: Text("لا توجد قصص نجاح حالياً"));
-                      }
-                      return SuccessStoriesList(stories: successStoryController.stories);
-                    }),
-            
+
+                    Container(
+                      height: 1,
+                      color: AppColors.darkBlue.withOpacity(0.3),
+                    ),
                     const SizedBox(height: 20),
-            
+
                     // عنوان الرسم البياني
                     Align(
                       alignment: Alignment.center,
@@ -170,15 +153,16 @@ class _BeneficiaryHomeViewState extends State<BeneficiaryHomeView> {
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              foreground: Paint()
-                                ..shader = const LinearGradient(
-                                  colors: [
-                                    AppColors.darkBlue,
-                                    AppColors.pinkBeige,
-                                  ],
-                                ).createShader(
-                                  const Rect.fromLTWH(100, 0, 300, 70),
-                                ),
+                              foreground:
+                                  Paint()
+                                    ..shader = const LinearGradient(
+                                      colors: [
+                                        AppColors.darkBlue,
+                                        AppColors.pinkBeige,
+                                      ],
+                                    ).createShader(
+                                      const Rect.fromLTWH(100, 0, 300, 70),
+                                    ),
                               shadows: [
                                 Shadow(
                                   color: Colors.black26,
@@ -194,7 +178,10 @@ class _BeneficiaryHomeViewState extends State<BeneficiaryHomeView> {
                             height: 2,
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(
-                                colors: [AppColors.pinkBeige, AppColors.darkBlue],
+                                colors: [
+                                  AppColors.pinkBeige,
+                                  AppColors.darkBlue,
+                                ],
                               ),
                               borderRadius: BorderRadius.circular(4),
                             ),
@@ -202,11 +189,36 @@ class _BeneficiaryHomeViewState extends State<BeneficiaryHomeView> {
                         ],
                       ),
                     ),
-            
+
                     const SizedBox(height: 38),
-            
+
                     // رسم بياني
-                    const AssociationGrowthChart(),
+                    StatisticsChartView(),
+
+                    const SizedBox(height: 20),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        'قصص النجاح',
+                        style: TextStyle(
+                          color: AppColors.darkBlue,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+                    Obx(() {
+                      if (successStoryController.stories.isEmpty) {
+                        return const Center(
+                          child: Text("لا توجد قصص نجاح حالياً"),
+                        );
+                      }
+                      return SuccessStoriesList(
+                        stories: successStoryController.stories,
+                      );
+                    }),
                   ],
                 ),
               ),

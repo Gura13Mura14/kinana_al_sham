@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:kinana_al_sham/models/VolunteerDetails.dart';
 import 'package:kinana_al_sham/services/profile_service.dart';
 import 'package:kinana_al_sham/utils/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,6 +25,11 @@ class ProfileController extends GetxController {
   final selectedDistrict = RxnString();
 
   final formKey = GlobalKey<FormState>();
+
+  bool get isAddressComplete {
+    final addr = user.value?.volunteerDetails?.address;
+    return addr != null && addr.trim().isNotEmpty;
+  }
 
   @override
   void onInit() {
@@ -87,31 +93,68 @@ class ProfileController extends GetxController {
     }
   }
 
-  Future<void> save() async {
-    if (!(formKey.currentState?.validate() ?? false)) return;
+Future<bool> save() async {
+  if (formKey.currentState?.validate() != true) return false;
 
+  isLoading.value = true;
+  try {
     final token = await _token();
-    if (token == null) {
-      Get.snackbar('خطأ', 'لا يوجد صلاحية');
-      return;
-    }
+    if (token == null) throw Exception('No token');
 
+    // بيانات التحديث
     final updatedData = {
-      'skills': skillsController.text.trim(),
-      'interests': interestsController.text.trim(),
-      'emergency_contact_name': emergencyNameController.text.trim(),
-      'emergency_contact_phone': emergencyPhoneController.text.trim(),
-      'address': selectedDistrict.value ?? '',
-      'phone_number': phoneController.text.trim(),
+      "skills": skillsController.text,
+      "interests": interestsController.text,
+      "emergency_contact_name": emergencyNameController.text,
+      "emergency_contact_phone": emergencyPhoneController.text,
+      "phone_number": phoneController.text,
+      "address": selectedDistrict.value ?? '',
     };
 
-    final ok = await service.updateVolunteerProfile(token, updatedData);
-    if (ok) {
-      Get.snackbar('نجاح', 'تم تحديث الملف الشخصي');
-      await fetchUserProfile();
-      isEditing.value = false;
+    // إرسال التحديث للسيرفر
+    final success = await service.updateVolunteerProfile(token, updatedData);
+
+    if (success) {
+      // إذا volunteerDetails موجودة استخدم copyWith، إذا null أنشئ نسخة جديدة
+      final currentUser = user.value;
+      if (currentUser != null) {
+        final updatedVolunteer = currentUser.volunteerDetails?.copyWith(
+              skills: skillsController.text,
+              interests: interestsController.text,
+              emergencyContactName: emergencyNameController.text,
+              emergencyContactPhone: emergencyPhoneController.text,
+              address: selectedDistrict.value ?? '',
+            ) ??
+            VolunteerDetails(
+              userId: currentUser.id,
+              skills: skillsController.text,
+              interests: interestsController.text,
+              availabilitySchedule: {}, // يمكنك إضافة قيمة افتراضية
+              emergencyContactName: emergencyNameController.text,
+              emergencyContactPhone: emergencyPhoneController.text,
+              dateJoinedFromForm: '', // ضع قيمة افتراضية مناسبة
+              address: selectedDistrict.value ?? '',
+              createdAt: '', // ضع قيمة افتراضية مناسبة
+              updatedAt: '', // ضع قيمة افتراضية مناسبة
+            );
+
+        // تحديث user.value محلياً
+        user.value = currentUser.copyWith(volunteerDetails: updatedVolunteer);
+      }
+
+      Get.snackbar('نجاح', 'تم تحديث الملف الشخصي بنجاح');
+      return true;
     } else {
-      Get.snackbar('خطأ', 'فشل التحديث');
+      Get.snackbar('خطأ', 'تعذر تحديث الملف الشخصي');
+      return false;
     }
+  } catch (e) {
+    Get.snackbar('خطأ', 'تعذر تحديث الملف الشخصي');
+    return false;
+  } finally {
+    isLoading.value = false;
   }
+}
+
+
 }

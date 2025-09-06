@@ -85,10 +85,10 @@ class CertificateCard extends StatelessWidget {
                     Text(
                       "شهادة مشاركة",
                       style: TextStyle(
-                        fontFamily: "Amiri", // 📌 للتحميل من Google Fonts
+                        fontFamily: "Amiri", 
                         fontSize: r.sp(30),
                         fontWeight: FontWeight.bold,
-                        color: AppColors.pinkBeige, // 🔹 لون جديد
+                        color: AppColors.pinkBeige, 
                         decoration: TextDecoration.none,
                       ),
                     ),

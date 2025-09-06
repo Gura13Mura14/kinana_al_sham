@@ -88,4 +88,16 @@ class SuccessStoryController extends GetxController {
         return 'غير معروف';
     }
   }
+  final selectedStory = Rxn<SuccessStory>();
+
+Future<void> loadStoryDetails(int id) async {
+  try {
+    final story = await _service.fetchStoryDetails(id);
+    selectedStory.value = story;
+  } catch (e) {
+    Get.snackbar("خطأ", "تعذر تحميل تفاصيل القصة");
+    print("Error fetching story details: $e");
+  }
+}
+
 }

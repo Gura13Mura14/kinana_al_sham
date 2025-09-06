@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kinana_al_sham/controllers/ProfileController.dart';
 import 'package:kinana_al_sham/theme/AppColors.dart';
-import 'package:kinana_al_sham/utils/app_constants.dart';
+import 'package:kinana_al_sham/views/views/update_profile_view.dart';
 import 'package:kinana_al_sham/widgets/responsive_sizes.dart';
 
 class ProfileView extends GetView<ProfileController> {
@@ -60,15 +60,12 @@ class ProfileView extends GetView<ProfileController> {
                             ),
                           ),
                           IconButton(
-                            onPressed: () => controller.isEditing.toggle(),
-                            icon: Obx(
-                              () => Icon(
-                                controller.isEditing.value
-                                    ? Icons.close
-                                    : Icons.edit,
-                                color: Colors.white,
-                                size: r.sp(22),
-                              ),
+                            onPressed:
+                                () => Get.to(() => const EditProfileView()),
+                            icon: Icon(
+                              Icons.edit,
+                              color: Colors.white,
+                              size: r.sp(22),
                             ),
                           ),
                         ],
@@ -114,7 +111,8 @@ class ProfileView extends GetView<ProfileController> {
                   ),
                 ),
 
-                // الكارد الأبيض للمعلومات
+                // معلومات البروفايل
+                // معلومات البروفايل
                 Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: r.wp(5),
@@ -133,34 +131,36 @@ class ProfileView extends GetView<ProfileController> {
                         ),
                       ],
                     ),
-                    child: Obx(() {
-                      final editing = controller.isEditing.value;
-                      return AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 250),
-                        switchInCurve: Curves.easeOut,
-                        switchOutCurve: Curves.easeIn,
-                        transitionBuilder:
-                            (child, anim) => SizeTransition(
-                              sizeFactor: anim,
-                              child: FadeTransition(
-                                opacity: anim,
-                                child: child,
-                              ),
-                            ),
-                        child:
-                            editing
-                                ? _EditForm(
-                                  key: const ValueKey('edit'),
-                                  controller: controller,
-                                  r: r,
-                                )
-                                : _ReadOnlyInfo(
-                                  key: const ValueKey('read'),
-                                  user: user,
-                                  r: r,
-                                ),
-                      );
-                    }),
+                    child: Column(
+                      children: [
+                        _infoRow('الاسم', user.name, r),
+                        _infoRow('البريد', user.email, r),
+                       
+                        _infoRow(
+                          'رقم جهة الطوارئ',
+                          user.volunteerDetails?.emergencyContactPhone ??
+                              'غير محدد',
+                          r,
+                        ),
+                        _infoRow(
+                          'المنطقة',
+                          user.volunteerDetails?.address?.isNotEmpty ?? false
+                              ? user.volunteerDetails!.address
+                              : 'غير محددة',
+                          r,
+                        ),
+                        _infoRow(
+                          'المهارات',
+                          user.volunteerDetails?.skills ?? 'غير محددة',
+                          r,
+                        ),
+                        _infoRow(
+                          'الاهتمامات',
+                          user.volunteerDetails?.interests ?? 'غير محددة',
+                          r,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -170,32 +170,8 @@ class ProfileView extends GetView<ProfileController> {
       ),
     );
   }
-}
 
-// -------------------- ReadOnly Info --------------------
-class _ReadOnlyInfo extends StatelessWidget {
-  const _ReadOnlyInfo({super.key, required this.user, required this.r});
-  final dynamic user;
-  final Responsive r;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _infoRow('الاسم', user.name),
-        _infoRow('البريد', user.email),
-        _infoRow('رقم الهاتف', user.phoneNumber ?? 'غير متوفر'),
-        _infoRow(
-          'المنطقة',
-          (user.volunteerDetails?.address?.isNotEmpty ?? false)
-              ? user.volunteerDetails!.address
-              : 'غير محددة',
-        ),
-      ],
-    );
-  }
-
-  Widget _infoRow(String label, String value) {
+  Widget _infoRow(String label, String value, Responsive r) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: r.hp(1.2)),
       child: Row(
@@ -213,127 +189,6 @@ class _ReadOnlyInfo extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// -------------------- Edit Form --------------------
-class _EditForm extends StatelessWidget {
-  const _EditForm({super.key, required this.controller, required this.r});
-  final ProfileController controller;
-  final Responsive r;
-
-  @override
-  Widget build(BuildContext context) {
-    return Form(
-      key: controller.formKey,
-      child: Column(
-        children: [
-          _roundedField(
-            controller.skillsController,
-            'المهارات',
-            Icons.design_services,
-          ),
-          SizedBox(height: r.hp(1.5)),
-          _roundedField(
-            controller.interestsController,
-            'الاهتمامات',
-            Icons.favorite,
-          ),
-          SizedBox(height: r.hp(1.5)),
-          _roundedField(
-            controller.phoneController,
-            'رقم الهاتف',
-            Icons.phone,
-            keyboardType: TextInputType.phone,
-          ),
-          SizedBox(height: r.hp(1.5)),
-          _roundedField(
-            controller.emergencyNameController,
-            'اسم جهة الطوارئ',
-            Icons.person,
-          ),
-          SizedBox(height: r.hp(1.5)),
-          _roundedField(
-            controller.emergencyPhoneController,
-            'رقم هاتف جهة الطوارئ',
-            Icons.local_phone,
-            keyboardType: TextInputType.phone,
-          ),
-          SizedBox(height: r.hp(1.5)),
-
-          DropdownButtonFormField<String>(
-            value: controller.selectedDistrict.value,
-            isExpanded: true,
-            items:
-                AppConstants.damascusDistricts
-                    .map((d) => DropdownMenuItem(value: d, child: Text(d)))
-                    .toList(),
-            decoration: _roundedDecoration(
-              label: 'المنطقة في دمشق',
-              icon: Icons.location_on,
-            ),
-            onChanged: (v) => controller.selectedDistrict.value = v,
-            validator:
-                (v) =>
-                    (v == null || v.isEmpty) ? 'الرجاء اختيار المنطقة' : null,
-          ),
-
-          SizedBox(height: r.hp(3)),
-          // زر الحفظ
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              icon: const Icon(Icons.save),
-              label: const Text('حفظ التعديلات'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.darkBlue,
-                padding: EdgeInsets.symmetric(vertical: r.hp(1.8)),
-                textStyle: TextStyle(
-                  fontSize: r.sp(16),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              onPressed: controller.save,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  TextFormField _roundedField(
-    TextEditingController controller,
-    String label,
-    IconData icon, {
-    TextInputType? keyboardType,
-  }) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: keyboardType,
-      decoration: _roundedDecoration(label: label, icon: icon),
-      validator: (v) => (v == null || v.trim().isEmpty) ? 'الحقل مطلوب' : null,
-    );
-  }
-
-  InputDecoration _roundedDecoration({
-    required String label,
-    required IconData icon,
-  }) {
-    return InputDecoration(
-      labelText: label,
-      prefixIcon: Icon(icon),
-      filled: true,
-      fillColor: Colors.grey.shade100,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(24),
-        borderSide: const BorderSide(color: Colors.transparent),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(24),
-        borderSide: BorderSide(color: AppColors.darkBlue),
       ),
     );
   }

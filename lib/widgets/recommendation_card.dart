@@ -19,9 +19,9 @@ class RecommendationCard extends StatelessWidget {
     final responsive = Responsive(context);
 
     return Directionality(
-      textDirection: TextDirection.rtl, // ❌ قلب كل المحتوى
+      textDirection: TextDirection.rtl, 
       child: Container(
-        width: responsive.wp(55), // حوالي نصف عرض الشاشة
+        width: responsive.wp(55),
         margin: EdgeInsets.only(right: responsive.wp(3)),
         padding: EdgeInsets.all(responsive.wp(3)),
         decoration: BoxDecoration(
@@ -30,7 +30,7 @@ class RecommendationCard extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: Colors.black12,
-              blurRadius: 6,
+              blurRadius: 8,
               offset: const Offset(2, 4),
             ),
           ],

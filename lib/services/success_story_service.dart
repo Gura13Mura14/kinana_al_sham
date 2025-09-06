@@ -79,4 +79,25 @@ class SuccessStoryService {
       'body': responseBody,
     };
   }
+
+  Future<SuccessStory> fetchStoryDetails(int id) async {
+  final token = (await StorageService.getLoginData())?['token'];
+  final url = Uri.parse('$baseUrl/success-stories/$id');
+
+  final response = await http.get(url, headers: {
+    "Accept": "application/json",
+    'Authorization': 'Bearer $token',
+  });
+
+  print("Fetch story details status: ${response.statusCode}");
+  print("Response: ${response.body}");
+
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body)['data'];
+    return SuccessStory.fromJson(data);
+  } else {
+    throw Exception("فشل تحميل تفاصيل القصة");
+  }
+}
+
 }

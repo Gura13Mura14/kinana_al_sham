@@ -1,6 +1,6 @@
-/*import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:kinana_al_sham/controllers/HonorBoardController.dart';
+import 'package:kinana_al_sham/controllers/honor_board_controller.dart';
 import 'package:kinana_al_sham/theme/AppColors.dart';
 import 'package:confetti/confetti.dart';
 import 'package:animated_background/animated_background.dart';
@@ -65,6 +65,10 @@ class _HonorBoardPageState extends State<HonorBoardPage>
             children: [
               GetBuilder<HonorBoardController>(
                 builder: (_) {
+                  if (controller.isLoading.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
                   final top3 = controller.topVolunteers.take(3).toList();
                   final others = controller.topVolunteers.skip(3).toList();
 
@@ -79,7 +83,11 @@ class _HonorBoardPageState extends State<HonorBoardPage>
                         ShaderMask(
                           shaderCallback: (Rect bounds) {
                             return const LinearGradient(
-                              colors: [Colors.orange, Colors.pink, Colors.red],
+                              colors: [
+                                AppColors.pinkBeige,
+
+                                const Color.fromARGB(255, 78, 135, 165),
+                              ],
                             ).createShader(bounds);
                           },
                           child: const Text(
@@ -100,12 +108,19 @@ class _HonorBoardPageState extends State<HonorBoardPage>
                                     .take(3)
                                     .map((v) => v.name)
                                     .toList(),
+                            ids:
+                                controller.topVolunteers
+                                    .take(3)
+                                    .map((v) => v.id)
+                                    .toList(),
                             hours:
                                 controller.topVolunteers.take(3).map((v) {
                                   final raw =
                                       v.volunteerDetails?.totalHoursVolunteered;
                                   return double.tryParse(raw ?? '0') ?? 0.0;
                                 }).toList(),
+                            volunteerOfWeek:
+                                controller.volunteerOfWeek, // اختياري
                           ),
 
                         const SizedBox(height: 40),
@@ -125,6 +140,7 @@ class _HonorBoardPageState extends State<HonorBoardPage>
                                 ),
                               ],
                             ),
+
                             child: ListTile(
                               leading: CircleAvatar(
                                 backgroundColor: AppColors.pinkBeige,
@@ -138,9 +154,70 @@ class _HonorBoardPageState extends State<HonorBoardPage>
                                   ),
                                 ),
                               ),
-                              title: Text(user.name),
-                              subtitle: Text(
-                                "عدد ساعات التطوع: ${user.volunteerDetails?.totalHoursVolunteered ?? '0'} ساعة",
+                              title: Row(
+                                children: [
+                                  Text(user.name),
+                                  if (controller.volunteerOfWeek != null &&
+                                      controller.volunteerOfWeek!['user_id']
+                                              .toString() ==
+                                          user.id.toString())
+                                    const Padding(
+                                      padding: EdgeInsets.only(right: 6),
+                                      child: Icon(
+                                        Icons.star,
+                                        color: Colors.orange,
+                                        size: 20,
+                                      ),
+                                    ),
+                                  if (controller.volunteerOfMonth != null &&
+                                      controller.volunteerOfMonth!['user_id']
+                                              .toString() ==
+                                          user.id.toString())
+                                    const Padding(
+                                      padding: EdgeInsets.only(right: 6),
+                                      child: Icon(
+                                        Icons.calendar_month,
+                                        color: Colors.redAccent,
+
+                                        size: 25,
+                                      ), // 🟦 ايقونة مختلفة
+                                    ),
+                                ],
+                              ),
+
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "عدد ساعات التطوع: ${user.volunteerDetails?.totalHoursVolunteered ?? '0'} ساعة",
+                                  ),
+                                  if (controller.volunteerOfWeek != null &&
+                                      controller.volunteerOfWeek!['user_id'] ==
+                                          user.id)
+                                    Text(
+                                      controller.volunteerOfWeek!['badge'] ??
+                                          '',
+                                      style: const TextStyle(
+                                        color: Colors.orange,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  if (controller.volunteerOfMonth != null &&
+                                      controller.volunteerOfMonth!['user_id']
+                                              .toString() ==
+                                          user.id.toString())
+                                    Text(
+                                      controller.volunteerOfMonth!['badge'] ??
+                                          '',
+                                      style: const TextStyle(
+                                        color: Colors.redAccent,
+
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                ],
                               ),
                             ),
                           ),
@@ -249,4 +326,3 @@ class _HonorBoardPageState extends State<HonorBoardPage>
     );
   }
 }
-*/

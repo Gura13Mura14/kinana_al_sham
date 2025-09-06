@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kinana_al_sham/controllers/honor_board_controller.dart';
 import 'package:kinana_al_sham/services/get_event_voulenter_service.dart';
-
 import 'package:kinana_al_sham/services/storage_service.dart';
 import 'package:kinana_al_sham/theme/AppColors.dart';
-
 import 'package:kinana_al_sham/views/views/my_event_page.dart';
 import 'package:kinana_al_sham/views/views/my_project_view.dart';
 
 class SideMenu extends StatelessWidget {
-  const SideMenu({super.key});
+  SideMenu({super.key});
+
+  final HonorBoardController honorController = Get.put(HonorBoardController());
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +30,7 @@ class SideMenu extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // ===== Header =====
                 DrawerHeader(
                   decoration: BoxDecoration(color: AppColors.darkBlue),
                   child: Column(
@@ -46,11 +48,12 @@ class SideMenu extends StatelessWidget {
                     ],
                   ),
                 ),
+
+                // ===== Main Menu =====
                 Expanded(
                   child: ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     children: [
-                      /// استفسارات
                       ListTile(
                         leading: const Icon(
                           Icons.question_answer,
@@ -58,15 +61,9 @@ class SideMenu extends StatelessWidget {
                         ),
                         title: const Text("الاستفسارات"),
                         onTap: () {
-                          if (userType == 'متطوع') {
-                            Get.toNamed('/Inquiry');
-                          } else {
-                            Get.toNamed('/Inquiry');
-                          }
+                          Get.toNamed('/Inquiry');
                         },
                       ),
-
-                      /// بروفايلي
                       ListTile(
                         leading: const Icon(Icons.person, color: Colors.green),
                         title: const Text("بروفايلي"),
@@ -78,18 +75,14 @@ class SideMenu extends StatelessWidget {
                           }
                         },
                       ),
-                      /// لوحة الشرف
                       ListTile(
                         leading: const Icon(Icons.star, color: Colors.amber),
                         title: const Text("لوحة الشرف"),
                         onTap: () {
-                          if (userType == 'متطوع') {
-                            Get.toNamed('/HonorBoard');
-                          } else {
-                            Get.toNamed('/HonorBoard');
-                          }
+                          Get.toNamed('/HonorBoard');
                         },
                       ),
+
                       if (userType == 'متطوع') ...[
                         ListTile(
                           leading: const Icon(
@@ -111,7 +104,6 @@ class SideMenu extends StatelessWidget {
                             Get.toNamed('/emergency_requests');
                           },
                         ),
-
                         ListTile(
                           leading: const Icon(
                             Icons.event,
@@ -138,6 +130,7 @@ class SideMenu extends StatelessWidget {
                           },
                         ),
                       ],
+
                       if (userType == 'مستفيد') ...[
                         ListTile(
                           leading: const Icon(
@@ -179,7 +172,6 @@ class SideMenu extends StatelessWidget {
                             Get.toNamed('/review_stories');
                           },
                         ),
-
                         ListTile(
                           leading: const Icon(
                             Icons.help_outline,
@@ -198,9 +190,74 @@ class SideMenu extends StatelessWidget {
                           },
                         ),
                       ],
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        child: GetBuilder<HonorBoardController>(
+                          builder: (controller) {
+                            if (controller.volunteerOfWeek == null &&
+                                controller.volunteerOfMonth == null) {
+                              return const Center(
+                                child: SizedBox(
+                                  height: 30,
+                                  width: 30,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              );
+                            }
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (controller.volunteerOfWeek != null)
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.emoji_events,
+                                        color: Color.fromARGB(255, 82, 33, 243),
+                                        size: 30,
+                                      ),
+                                      const SizedBox(width: 20),
+                                      Expanded(
+                                        child: Text(
+                                          " شارة متطوع الأسبوع: ${controller.volunteerOfWeek!['name'] ?? ''} (${controller.volunteerOfWeek!['total_hours'] ?? '0'} ساعة)",
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                const SizedBox(height: 4),
+                                if (controller.volunteerOfMonth != null)
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.emoji_events,
+                                        color: Colors.amber,
+                                        size: 30,
+                                      ),
+                                      const SizedBox(width: 20),
+                                      Expanded(
+                                        child: Text(
+                                          "شارة متطوع الشهر :              ${controller.volunteerOfMonth!['name'] ?? ''} (${controller.volunteerOfMonth!['total_hours'] ?? '0'} ساعة)",
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
                     ],
                   ),
                 ),
+
+                // ===== Volunteer Badges (without Cards) =====
               ],
             );
           },

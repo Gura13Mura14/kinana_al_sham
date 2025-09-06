@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:kinana_al_sham/controllers/project_controller';
+import 'package:kinana_al_sham/controllers/project_controller.dart';
 import 'package:kinana_al_sham/theme/AppColors.dart';
 import 'package:kinana_al_sham/views/views/project_detalis_view.dart';
 

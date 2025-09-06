@@ -9,6 +9,8 @@ class VolunteeringOpportunity {
   final DateTime endDate;
   final String requirements;
   final bool isRemote;
+  final String skills;
+  final String category;
 
   VolunteeringOpportunity({
     required this.id,
@@ -21,6 +23,8 @@ class VolunteeringOpportunity {
     required this.endDate,
     required this.requirements,
     required this.isRemote,
+    required this.skills,
+    required this.category,
   });
 
   factory VolunteeringOpportunity.fromJson(Map<String, dynamic> json) {
@@ -35,6 +39,8 @@ class VolunteeringOpportunity {
       endDate: DateTime.parse(json['end_date']),
       requirements: json['requirements'],
       isRemote: json['is_remote'],
+      skills: json['skills'],
+      category: json['category'],
     );
   }
 }

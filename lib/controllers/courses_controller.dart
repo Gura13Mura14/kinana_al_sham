@@ -1,50 +1,23 @@
 import 'package:get/get.dart';
-import 'package:kinana_al_sham/services/course_api_service.dart';
 import '../models/course.dart';
-import '../services/storage_service.dart';
+import '../services/course_api_service.dart';
 
 class CoursesController extends GetxController {
-  final ApiService api = ApiService();
-
   var courses = <Course>[].obs;
-  var loading = false.obs;
-  String userType = 'متطوع';
-
-  @override
-  void onInit() {
-    super.onInit();
-    _loadUserType();
-    fetchCourses();
-  }
-
-  void _loadUserType() async {
-    final data = await StorageService.getLoginData();
-    userType = data?['user_type'] ?? 'متطوع';
-  }
+  var isLoading = false.obs;
 
   Future<void> fetchCourses() async {
-    loading.value = true;
     try {
-      if (userType == 'متطوع') {
-        // جلب الدورات الخاصة بالمتطوع من endpoint المعلن
-        final announcedCourse = await api.getAnnouncedCourse();
-        if (announcedCourse != null) {
-          courses.value = [announcedCourse];
-        } else {
-          courses.value = [];
-        }
-      } else {
-        // للمستفيدين جلب الدورات من endpoint العادي
-        final all = await api.getCourses();
-        courses.value =
-            all
-                .where(
-                  (c) => c.targetAudience == userType && c.isAnnounced == 0,
-                )
-                .toList();
+      isLoading.value = true;
+      final data = await ApiService.getRequest("courses");
+      if (data['success']) {
+        final list = data['data'] is List ? data['data'] : data['data'].values;
+        courses.value = list.map<Course>((e) => Course.fromJson(e)).toList();
       }
+    } catch (e) {
+      print("Error fetching courses: $e");
     } finally {
-      loading.value = false;
+      isLoading.value = false;
     }
   }
 }

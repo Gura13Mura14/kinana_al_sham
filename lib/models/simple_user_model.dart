@@ -4,7 +4,7 @@ class SimpleUser {
   final int id;
   final String name;
   final String email;
-  final String phoneNumber;
+  final String? phoneNumber;
   final String role;
   final VolunteerDetails? volunteerDetails;
   final String? profilePictureUrl;
@@ -13,37 +13,43 @@ class SimpleUser {
     required this.id,
     required this.name,
     required this.email,
-    required this.phoneNumber,
-    required this.role,
+    this.phoneNumber,
+    this.role = 'Volunteer',
     this.volunteerDetails,
     this.profilePictureUrl,
   });
 
-  factory SimpleUser.fromJson(Map<String, dynamic> json) {
-    return SimpleUser(
-      id: json['volunteer_details']?['user_id'] ?? 0,
-      name: json['name'],
-      email: json['email'],
-      phoneNumber: json['phone_number'] ?? '',
-      role: json['role'] ?? 'Volunteer',
-      volunteerDetails:
-          json['volunteer_details'] != null
-              ? VolunteerDetails.fromJson(json['volunteer_details'])
-              : null,
 
-      profilePictureUrl: null,
+  SimpleUser copyWith({
+    String? name,
+    String? email,
+    String? phoneNumber,
+    String? role,
+    VolunteerDetails? volunteerDetails,
+    String? profilePictureUrl,
+  }) {
+    return SimpleUser(
+      id: id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      role: role ?? this.role,
+      volunteerDetails: volunteerDetails ?? this.volunteerDetails,
+      profilePictureUrl: profilePictureUrl ?? this.profilePictureUrl,
     );
   }
 
-  SimpleUser copyWith({String? profilePictureUrl}) {
+  factory SimpleUser.fromJson(Map<String, dynamic> json) {
     return SimpleUser(
-      id: id,
-      name: name,
-      email: email,
-      phoneNumber: phoneNumber,
-      role: role,
-      volunteerDetails: volunteerDetails,
-      profilePictureUrl: profilePictureUrl ?? this.profilePictureUrl,
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      phoneNumber: json['phone_number'],
+      role: json['role'] ?? 'Volunteer',
+      profilePictureUrl: json['profile_picture_url'],
+      volunteerDetails: json['volunteer_details'] != null
+          ? VolunteerDetails.fromJson(json['volunteer_details'])
+          : null,
     );
   }
 }

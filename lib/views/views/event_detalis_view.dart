@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kinana_al_sham/models/event_detalis.dart';
 import 'package:kinana_al_sham/services/event_register_service.dart';
+import 'package:kinana_al_sham/services/post-road-map-service.dart';
 import 'package:kinana_al_sham/services/storage_service.dart';
 import 'package:kinana_al_sham/theme/AppColors.dart';
 import 'package:kinana_al_sham/controllers/event_register_controller.dart';
+import 'package:kinana_al_sham/views/views/RoadmapTimelineView.dart';
 import 'package:kinana_al_sham/views/views/comment_view.dart';
+
 
 class EventDetailsPage extends StatefulWidget {
   final EventDetails event;
@@ -96,41 +99,36 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                       "تاريخ النهاية",
                       event.endDatetime,
                     ),
-
                     if (event.maxParticipants != null)
                       _buildListItem(
                         Icons.people,
                         "أقصى عدد مشاركين",
                         event.maxParticipants.toString(),
                       ),
-
                     if (event.latitude != null && event.longitude != null)
                       _buildListItem(
                         Icons.map,
                         "الإحداثيات",
                         "Lat: ${event.latitude}, Lng: ${event.longitude}",
                       ),
-
                     if (event.eventType != null)
                       _buildListItem(
                         Icons.event,
                         "نوع الفعالية",
                         event.eventType!.name,
                       ),
-                      if (event.organizer != null)
+                    if (event.organizer != null)
                       _buildListItem(
                         Icons.person,
                         "المنظم",
                         event.organizer!.name,
                       ),
-
                     if (event.supervisor != null)
                       _buildListItem(
                         Icons.supervised_user_circle,
                         "المشرف",
                         event.supervisor!.name,
                       ),
-
                     if (event.volunteers.isNotEmpty) ...[
                       const SizedBox(height: 16),
                       const Text(
@@ -163,11 +161,10 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                                 .toList(),
                       ),
                     ],
-
                     const SizedBox(height: 16),
                     Row(
                       children: [
-                        if (userType == "متطوع")
+                        if (userType == "متطوع") ...[
                           Expanded(
                             child: _buildActionButton(
                               text: "تسجيل في الفعالية",
@@ -179,6 +176,35 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                               },
                             ),
                           ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _buildActionButton(
+                              text: "تصفح Road map",
+                              onPressed: () async {
+                                try {
+                                  final roadmap =
+                                      await RoadmapService.fetchByEventId(
+                                        event.id,
+                                      );
+                                  if (roadmap == null) {
+                                    Get.snackbar(
+                                      "خطأ",
+                                      "لا يوجد Roadmap لهذه الفعالية",
+                                    );
+                                    return;
+                                  }
+                                  Get.to(
+                                    () => RoadmapTimelineView(
+                                      roadmapId: roadmap.id,
+                                    ),
+                                  );
+                                } catch (e) {
+                                  Get.snackbar("خطأ", e.toString());
+                                }
+                              },
+                            ),
+                          ),
+                        ],
                         if (userType == "مستفيد")
                           Expanded(
                             child: _buildActionButton(
@@ -199,6 +225,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       ),
     );
   }
+
   // قائمة بسيطة مع أيقونة وخط فاصل
   Widget _buildListItem(IconData icon, String title, String value) {
     return Column(
